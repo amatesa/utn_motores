@@ -1,0 +1,5 @@
+La lógica esta delegada en este momento a:
+
+StarterAssets/
+  ThirdPersonController (movimiento)
+  StarterAssetsInputs (input)
