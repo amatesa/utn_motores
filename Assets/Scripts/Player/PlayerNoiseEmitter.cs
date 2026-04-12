@@ -32,17 +32,16 @@ public class PlayerNoiseEmitter : MonoBehaviour
             if (input.sprint)
             {
                 NoiseSystem.Instance.AddNoise(runNoise * Time.deltaTime);
-                PlaySound(runClip);
+                HandleAudio(runClip);
             }
             else
             {
                 NoiseSystem.Instance.AddNoise(walkNoise * Time.deltaTime);
-                PlaySound(walkClip);
+                HandleAudio(walkClip);
             }
         }
         else
         {
-            NoiseSystem.Instance.DecayNoise();
             if (audioSource.isPlaying)
             {
                 audioSource.Stop();
@@ -62,4 +61,19 @@ public class PlayerNoiseEmitter : MonoBehaviour
             audioSource.Play();
         }
     }
+    void HandleAudio(AudioClip clip)
+    {
+        if (audioSource.clip != clip)
+        {
+            audioSource.clip = clip;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+        else if (!audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
+    }
+
+
 }

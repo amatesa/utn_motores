@@ -2145,8 +2145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e150f5def925e8499c2f9760d4aa023, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerNoiseEmitter
-  walkNoise: 5
-  runNoise: 10
+  walkNoise: 8
+  runNoise: 15
   audioSource: {fileID: 313885437}
   walkClip: {fileID: 8300000, guid: f162a514d315c754bab56d6b9ba36988, type: 3}
   runClip: {fileID: 8300000, guid: 334c5e176a734cd49a6b91ac869ff2df, type: 3}
@@ -9064,8 +9064,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 875155071}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.53502667, y: -0.032738905, z: 0.020755118, w: 0.84394544}
-  m_LocalPosition: {x: 8.259999, y: 2.335, z: -13}
+  m_LocalRotation: {x: 0.1557623, y: -0.038328987, z: 0.006048649, w: 0.9870322}
+  m_LocalPosition: {x: 6.16, y: 2.335, z: -11.9800005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9939,8 +9939,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 896884968}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.53502667, y: -0.032738905, z: 0.020755118, w: 0.84394544}
-  m_LocalPosition: {x: 8.103785, y: 3.3941126, z: -10.989584}
+  m_LocalRotation: {x: 0.1557623, y: -0.038328987, z: 0.006048649, w: 0.9870322}
+  m_LocalPosition: {x: 6.0496387, y: 1.874362, z: -10.5587}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12748,7 +12748,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.03
+      value: 5.93
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12756,7 +12756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.04
+      value: -9.02
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_LocalRotation.w
