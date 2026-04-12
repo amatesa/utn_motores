@@ -6,8 +6,10 @@ public class SafeArea : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("ENTER SAFE AREA");
+            Debug.Log("[SAFE AREA] ENTER");
+
             PlayerSafeState.Instance.SetSafe(true);
+            NoiseSystem.Instance.ClearSounds();
         }
     }
 
@@ -15,8 +17,9 @@ public class SafeArea : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("[SAFE AREA] EXIT");
+
             PlayerSafeState.Instance.SetSafe(false);
-            Debug.Log("Exit SAFE");
         }
     }
 }

@@ -3,14 +3,29 @@ using UnityEngine;
 
 public class PlayerNoiseEmitter : MonoBehaviour
 {
-    public float walkNoise = 5f;
-    public float runNoise = 10f;
-    public AudioSource audioSource;
-    public AudioClip walkClip;
-    public AudioClip runClip;
+    [Header("Noise Settings")]
+    [SerializeField] private float walkNoise = 5f;
+    [SerializeField] private float runNoise = 12f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip runClip;
 
     private CharacterController controller;
     private StarterAssetsInputs input;
+
+    [Header("Sound Timing")]
+    [SerializeField] private float walkCooldown = 0.6f;
+    [SerializeField] private float runCooldown = 0.3f;
+
+    [Header("Movement Threshold")]
+    [SerializeField] private float minMovementSpeed = 0.3f;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugEnabled = true;
+
+    private float lastSoundTime;
 
     void Start()
     {
@@ -25,44 +40,67 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
     void HandleNoise()
     {
-        bool isMoving = controller.velocity.magnitude > 0.1f;
-
-        if (isMoving)
+        // SAFE AREA
+        if (PlayerSafeState.Instance.IsSafe)
         {
-            if (input.sprint)
-            {
-                NoiseSystem.Instance.AddNoise(runNoise * Time.deltaTime);
-                HandleAudio(runClip);
-            }
-            else
-            {
-                NoiseSystem.Instance.AddNoise(walkNoise * Time.deltaTime);
-                HandleAudio(walkClip);
-            }
+            StopAudio();
+            return;
+        }
+
+        float speed = controller.velocity.magnitude;
+
+        if (speed < minMovementSpeed)
+        {
+            StopAudio();
+            return;
+        }
+
+        // STEALTH
+        if (input.stealth)
+        {
+            StopAudio();
+            return;
+        }
+
+        float currentCooldown = input.sprint ? runCooldown : walkCooldown;
+
+        if (Time.time - lastSoundTime < currentCooldown)
+            return;
+
+        lastSoundTime = Time.time;
+
+        if (input.sprint)
+        {
+            EmitSound(runNoise, "RUN");
+            HandleAudio(runClip);
         }
         else
         {
-            if (audioSource.isPlaying)
-            {
-                audioSource.Stop();
-            }
+            EmitSound(walkNoise, "WALK");
+            HandleAudio(walkClip);
         }
     }
-    void PlaySound(AudioClip clip)
+
+    void EmitSound(float intensity, string type)
     {
-        if (audioSource.clip != clip)
+        // DESVIACIÓN → rompe tracking perfecto
+        Vector3 randomOffset = Random.insideUnitSphere * 0.5f;
+        randomOffset.y = 0;
+
+        Vector3 soundPosition = transform.position + randomOffset;
+
+        NoiseSystem.Instance.EmitSound(soundPosition, intensity);
+
+        if (debugEnabled)
         {
-            audioSource.clip = clip;
-            audioSource.loop = true;
-            audioSource.Play();
-        }
-        else if (!audioSource.isPlaying)
-        {
-            audioSource.Play();
+            Debug.Log($"[PLAYER SOUND] {type} → intensity={intensity} pos={soundPosition}");
         }
     }
+
     void HandleAudio(AudioClip clip)
     {
+        if (audioSource == null || clip == null) return;
+
         if (audioSource.clip != clip)
         {
             audioSource.clip = clip;
@@ -75,5 +113,11 @@ public class PlayerNoiseEmitter : MonoBehaviour
         }
     }
 
-
+    void StopAudio()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
 }

@@ -702,7 +702,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemy
   target: {fileID: 313885444}
-  noiseThreshold: 10
+  investigateDuration: 4
+  debugEnabled: 1
 --- !u!195 &99577734
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2477,10 +2478,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerNoiseEmitter
   walkNoise: 8
   runNoise: 15
-  stealthNoise: 0.5
   audioSource: {fileID: 313885437}
   walkClip: {fileID: 8300000, guid: f162a514d315c754bab56d6b9ba36988, type: 3}
   runClip: {fileID: 8300000, guid: 334c5e176a734cd49a6b91ac869ff2df, type: 3}
+  walkCooldown: 0.4
+  runCooldown: 0.2
+  minMovementSpeed: 0.3
+  debugEnabled: 1
 --- !u!82 &313885437
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12456,6 +12460,9 @@ MonoBehaviour:
   currentNoise: 0
   maxNoise: 100
   decayRate: 5
+  maxEventAge: 1.5
+  minDistanceBetweenEvents: 0.5
+  debugEnabled: 1
 --- !u!4 &977563837
 Transform:
   m_ObjectHideFlags: 0

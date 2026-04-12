@@ -3,13 +3,22 @@ using UnityEngine.UI;
 
 public class NoiseUI : MonoBehaviour
 {
-    public Slider noiseSlider;
+    [SerializeField] private Slider noiseSlider;
 
     void Update()
     {
-        if (NoiseSystem.Instance != null)
+        if (NoiseSystem.Instance == null)
         {
-            noiseSlider.value = NoiseSystem.Instance.currentNoise;
+            Debug.LogWarning("[NoiseUI] NoiseSystem Instance is NULL");
+            return;
         }
+
+        if (noiseSlider == null)
+        {
+            Debug.LogWarning("[NoiseUI] Slider not assigned");
+            return;
+        }
+
+        noiseSlider.value = NoiseSystem.Instance.GetNoise();
     }
 }
