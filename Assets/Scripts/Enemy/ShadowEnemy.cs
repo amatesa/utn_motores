@@ -5,29 +5,39 @@ public enum EnemyState
 {
     Idle,
     Investigate,
-    Chase
+    Chase,
+    Retreat
 }
 
 public class ShadowEnemy : MonoBehaviour
 {
+    [Header("Target")]
     public Transform target;
 
-    private EnemyState currentState;
-    private Vector3 lastKnownPosition;
+    [Header("FOV")]
+    [SerializeField] private float viewAngle = 90f;
+
+    [Header("Vision")]
+    [SerializeField] private float visionRange = 6f;
+    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private LayerMask playerMask;
 
     [Header("Hearing")]
     [SerializeField] private float investigateDuration = 4f;
 
-    private float investigateTimer = 0f;
+    [Header("Chase")]
+    [SerializeField] private float loseSightTime = 2f;
 
-    private NavMeshAgent agent;
-
-    // =========================
-    // DEBUG CONTROL
-    // =========================
     [Header("Debug")]
     [SerializeField] private bool debugEnabled = true;
 
+    private EnemyState currentState;
+    private NavMeshAgent agent;
+
+    private float investigateTimer;
+    private float loseSightTimer;
+
+    private Vector3 lastKnownPosition;
     private float lastDebugSoundTime = -1f;
 
     void Start()
@@ -36,7 +46,6 @@ public class ShadowEnemy : MonoBehaviour
         currentState = EnemyState.Idle;
 
         NoiseSystem.Instance.ClearSounds();
-
         DebugLog("START → IDLE");
     }
 
@@ -44,32 +53,183 @@ public class ShadowEnemy : MonoBehaviour
     {
         bool isPlayerSafe = PlayerSafeState.Instance.IsSafe;
 
-        // SAFE AREA (NO BLOQUEA FSM)
-        if (isPlayerSafe)
+        // SAFE AREA → FORZAR RETREAT
+        if (isPlayerSafe && currentState == EnemyState.Chase)
         {
-            if (agent.hasPath)
-            {
-                agent.ResetPath();
-                DebugLog("SAFE → ResetPath()");
-            }
+            DebugLog("PLAYER SAFE → RETREAT");
+            SwitchToRetreat();
+        }
 
-            investigateTimer = 0f;
+        // VISIÓN
+        if (CanSeePlayer() && !isPlayerSafe)
+        {
+            SwitchToChase();
         }
 
         switch (currentState)
         {
             case EnemyState.Idle:
-                HandleIdle(isPlayerSafe);
+                HandleIdle();
                 break;
 
             case EnemyState.Investigate:
-                HandleInvestigate(isPlayerSafe);
+                HandleInvestigate();
                 break;
 
             case EnemyState.Chase:
-                HandleChase(isPlayerSafe);
+                HandleChase();
+                break;
+
+            case EnemyState.Retreat:
+                HandleRetreat();
                 break;
         }
+    }
+
+    // =========================
+    // STATES
+    // =========================
+
+    void HandleIdle()
+    {
+        var sound = GetRelevantSound();
+
+        if (sound.HasValue)
+        {
+            lastKnownPosition = sound.Value.position;
+            currentState = EnemyState.Investigate;
+            investigateTimer = 0f;
+
+            DebugLog("IDLE → INVESTIGATE");
+            return;
+        }
+
+        Patrol();
+    }
+
+    void HandleInvestigate()
+    {
+        investigateTimer += Time.deltaTime;
+
+        var sound = GetRelevantSound();
+
+        if (sound.HasValue)
+        {
+            lastKnownPosition = sound.Value.position;
+        }
+
+        agent.SetDestination(lastKnownPosition);
+
+        if (!agent.pathPending && agent.remainingDistance < 1f)
+        {
+            SearchAround();
+        }
+
+        if (investigateTimer > investigateDuration)
+        {
+            DebugLog("INVESTIGATE → IDLE");
+            currentState = EnemyState.Idle;
+        }
+    }
+
+    void HandleChase()
+    {
+        if (CanSeePlayer())
+        {
+            loseSightTimer = 0f;
+            agent.SetDestination(target.position);
+            DebugLog("CHASE → following player");
+        }
+        else
+        {
+            loseSightTimer += Time.deltaTime;
+
+            if (loseSightTimer > loseSightTime)
+            {
+                DebugLog("LOST PLAYER → INVESTIGATE");
+                currentState = EnemyState.Investigate;
+                investigateTimer = 0f;
+                lastKnownPosition = target.position;
+            }
+        }
+    }
+
+    void HandleRetreat()
+    {
+        if (!agent.pathPending && agent.remainingDistance < 1f)
+        {
+            DebugLog("RETREAT → INVESTIGATE");
+
+            Vector3 randomDir = Random.insideUnitSphere * 8f;
+            randomDir.y = 0;
+
+            Vector3 newPoint = transform.position + randomDir;
+
+            if (NavMesh.SamplePosition(newPoint, out NavMeshHit hit, 8f, NavMesh.AllAreas))
+            {
+                lastKnownPosition = hit.position;
+            }
+
+            currentState = EnemyState.Investigate;
+            investigateTimer = 0f;
+        }
+    }
+
+    // =========================
+    // TRANSITIONS
+    // =========================
+
+    void SwitchToChase()
+    {
+        currentState = EnemyState.Chase;
+        DebugLog("→ CHASE");
+    }
+
+    void SwitchToRetreat()
+    {
+        currentState = EnemyState.Retreat;
+
+        Vector3 retreatDir = (transform.position - target.position).normalized;
+        Vector3 retreatPoint = transform.position + retreatDir * 6f;
+
+        if (NavMesh.SamplePosition(retreatPoint, out NavMeshHit hit, 6f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+
+        DebugLog("→ RETREAT");
+    }
+
+    // =========================
+    // VISION
+    // =========================
+
+    bool CanSeePlayer()
+    {
+        Vector3 origin = transform.position + Vector3.up * 1.5f;
+        Vector3 targetPos = target.position + Vector3.up * 1f;
+
+        Vector3 dir = (targetPos - origin).normalized;
+        float distance = Vector3.Distance(origin, targetPos);
+
+        if (distance > visionRange)
+            return false;
+
+        float angle = Vector3.Angle(transform.forward, dir);
+        if (angle > viewAngle / 2f)
+            return false;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, visionRange, obstacleMask | playerMask))
+        {
+            if (((1 << hit.collider.gameObject.layer) & playerMask) != 0)
+            {
+                DebugLog("VISION DETECTED");
+                return true;
+            }
+        }
+
+        Debug.DrawRay(origin, dir * visionRange, Color.red);
+        return false;
     }
 
     // =========================
@@ -85,123 +245,55 @@ public class ShadowEnemy : MonoBehaviour
     {
         var events = NoiseSystem.Instance.GetSoundEvents();
 
-        if (events.Count == 0)
-            return null;
-
         SoundEvent? latest = null;
 
         foreach (var e in events)
         {
             float distance = Vector3.Distance(transform.position, e.position);
-            float hearingRange = GetHearingRange(e.intensity);
+            float range = GetHearingRange(e.intensity);
 
-            if (distance > hearingRange)
-                continue;
+            if (distance > range) continue;
 
             if (!latest.HasValue || e.time > latest.Value.time)
-            {
                 latest = e;
-            }
         }
 
-        if (latest.HasValue)
+        if (latest.HasValue && latest.Value.time != lastDebugSoundTime)
         {
-            if (latest.Value.time != lastDebugSoundTime)
-            {
-                lastDebugSoundTime = latest.Value.time;
-
-                DebugLog($"HEARD SOUND → pos={latest.Value.position} intensity={latest.Value.intensity}");
-            }
+            lastDebugSoundTime = latest.Value.time;
+            DebugLog("HEARD SOUND");
         }
 
         return latest;
     }
 
     // =========================
-    // STATES
+    // MOVEMENT
     // =========================
 
-    void HandleIdle(bool isPlayerSafe)
+    void Patrol()
     {
-        var sound = GetRelevantSound();
-
-        if (sound.HasValue && !isPlayerSafe)
-        {
-            lastKnownPosition = sound.Value.position;
-            currentState = EnemyState.Investigate;
-            investigateTimer = 0f;
-
-            DebugLog("IDLE → INVESTIGATE");
-
-            return;
-        }
-
-        // Patrulla SOLO si no está en safe restriction
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             Vector3 randomPoint = transform.position + Random.insideUnitSphere * 5f;
 
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomPoint, out hit, 5f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
             {
                 agent.SetDestination(hit.position);
-                DebugLog("PATROL → new point");
+                DebugLog("PATROL");
             }
         }
     }
 
-    void HandleInvestigate(bool isPlayerSafe)
+    void SearchAround()
     {
-        if (isPlayerSafe)
+        Vector3 randomPoint = lastKnownPosition + Random.insideUnitSphere * 2f;
+
+        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            DebugLog("INVESTIGATE BLOCKED BY SAFE AREA");
-            return;
+            agent.SetDestination(hit.position);
+            DebugLog("SEARCH");
         }
-
-        investigateTimer += Time.deltaTime;
-
-        var sound = GetRelevantSound();
-
-        if (sound.HasValue)
-        {
-            lastKnownPosition = sound.Value.position;
-
-            float intensity = sound.Value.intensity;
-            agent.speed = Mathf.Lerp(1.5f, 5f, intensity / 20f);
-
-            DebugLog($"UPDATE TARGET → pos={lastKnownPosition} speed={agent.speed}");
-        }
-
-        if (!agent.hasPath || Vector3.Distance(agent.destination, lastKnownPosition) > 0.2f)
-        {
-            agent.SetDestination(lastKnownPosition);
-            DebugLog("SET DESTINATION → lastKnownPosition");
-        }
-
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-        {
-            DebugLog("REACHED LAST POSITION");
-        }
-
-        if (investigateTimer > investigateDuration)
-        {
-            DebugLog("LOST TARGET → BACK TO IDLE");
-
-            currentState = EnemyState.Idle;
-            investigateTimer = 0f;
-        }
-    }
-
-    void HandleChase(bool isPlayerSafe)
-    {
-        if (isPlayerSafe)
-        {
-            DebugLog("CHASE BLOCKED BY SAFE AREA");
-            return;
-        }
-
-        agent.SetDestination(target.position);
-        DebugLog($"CHASE → target={target.position}");
     }
 
     // =========================
@@ -211,7 +303,26 @@ public class ShadowEnemy : MonoBehaviour
     void DebugLog(string msg)
     {
         if (!debugEnabled) return;
-
         Debug.Log($"[ENEMY][{currentState}] {msg}");
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Vector3 origin = transform.position + Vector3.up * 1.5f;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(origin, visionRange);
+
+        Vector3 forward = transform.forward;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(origin, origin + forward * visionRange);
+
+        Vector3 left = Quaternion.Euler(0, -viewAngle / 2, 0) * forward;
+        Vector3 right = Quaternion.Euler(0, viewAngle / 2, 0) * forward;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(origin, origin + left * visionRange);
+        Gizmos.DrawLine(origin, origin + right * visionRange);
     }
 }

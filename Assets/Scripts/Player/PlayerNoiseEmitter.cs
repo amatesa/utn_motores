@@ -3,9 +3,13 @@ using UnityEngine;
 
 public class PlayerNoiseEmitter : MonoBehaviour
 {
-    [Header("Noise Settings")]
+    [Header("Noise Settings (UI ONLY)")]
     [SerializeField] private float walkNoise = 5f;
     [SerializeField] private float runNoise = 12f;
+
+    [Header("Event Noise (IA)")]
+    [SerializeField] private float runEventIntensity = 8f; // 🔥 SOLO para eventos
+    [SerializeField] private bool enableRunEvents = true;  // control fácil
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -15,9 +19,8 @@ public class PlayerNoiseEmitter : MonoBehaviour
     private CharacterController controller;
     private StarterAssetsInputs input;
 
-    [Header("Sound Timing")]
-    [SerializeField] private float walkCooldown = 0.6f;
-    [SerializeField] private float runCooldown = 0.3f;
+    [Header("Timing")]
+    [SerializeField] private float runEventCooldown = 1.2f; // 🔥 menos frecuente
 
     [Header("Movement Threshold")]
     [SerializeField] private float minMovementSpeed = 0.3f;
@@ -25,7 +28,7 @@ public class PlayerNoiseEmitter : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugEnabled = true;
 
-    private float lastSoundTime;
+    private float lastRunEventTime;
 
     void Start()
     {
@@ -40,7 +43,9 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
     void HandleNoise()
     {
+        // =========================
         // SAFE AREA
+        // =========================
         if (PlayerSafeState.Instance.IsSafe)
         {
             StopAudio();
@@ -49,41 +54,62 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
         float speed = controller.velocity.magnitude;
 
+        // =========================
+        // NO MOVEMENT
+        // =========================
         if (speed < minMovementSpeed)
         {
             StopAudio();
             return;
         }
 
-        // STEALTH
+        // =========================
+        // STEALTH (NO SOUND AT ALL)
+        // =========================
         if (input.stealth)
         {
             StopAudio();
             return;
         }
 
-        float currentCooldown = input.sprint ? runCooldown : walkCooldown;
-
-        if (Time.time - lastSoundTime < currentCooldown)
-            return;
-
-        lastSoundTime = Time.time;
-
+        // =========================
+        // UI NOISE (SIEMPRE ACTIVO)
+        // =========================
         if (input.sprint)
         {
-            EmitSound(runNoise, "RUN");
+            NoiseSystem.Instance.AddNoise(runNoise * Time.deltaTime);
             HandleAudio(runClip);
+
+            HandleRunEvent(); // 🔥 SOLO sprint puede generar evento
         }
         else
         {
-            EmitSound(walkNoise, "WALK");
+            NoiseSystem.Instance.AddNoise(walkNoise * Time.deltaTime);
             HandleAudio(walkClip);
+
+            // NO EVENTOS EN WALK
         }
+    }
+
+    // =========================
+    // EVENTOS CONTROLADOS
+    // =========================
+    void HandleRunEvent()
+    {
+        if (!enableRunEvents)
+            return;
+
+        if (Time.time - lastRunEventTime < runEventCooldown)
+            return;
+
+        lastRunEventTime = Time.time;
+
+        EmitSound(runEventIntensity, "RUN_EVENT");
     }
 
     void EmitSound(float intensity, string type)
     {
-        // DESVIACIÓN → rompe tracking perfecto
+        // pequeña desviación para evitar tracking perfecto
         Vector3 randomOffset = Random.insideUnitSphere * 0.5f;
         randomOffset.y = 0;
 
@@ -93,10 +119,13 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
         if (debugEnabled)
         {
-            Debug.Log($"[PLAYER SOUND] {type} → intensity={intensity} pos={soundPosition}");
+            Debug.Log($"[PLAYER EVENT] {type} → intensity={intensity} pos={soundPosition}");
         }
     }
 
+    // =========================
+    // AUDIO
+    // =========================
     void HandleAudio(AudioClip clip)
     {
         if (audioSource == null || clip == null) return;
