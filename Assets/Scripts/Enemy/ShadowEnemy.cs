@@ -36,6 +36,24 @@ public class ShadowEnemy : MonoBehaviour
     [SerializeField] private float pauseChance = 0.1f;
     [SerializeField] private float pauseDuration = 1.2f;
 
+    [SerializeField] private Transform visualRoot;
+    [SerializeField] private Transform[] shadowLayers;
+
+    [Header("Shadow Life")]
+    [SerializeField] private float pulseSpeed = 2f;
+    [SerializeField] private float pulseAmount = 0.15f;
+    [SerializeField] private float deformSpeed = 1.3f;
+    [SerializeField] private float deformAmount = 0.1f;
+    [SerializeField] private float driftAmount = 0.2f;
+    private Vector3 baseScale;
+    private Vector3 basePosition;
+    [SerializeField] private float randomScaleAmount = 0.3f;
+    [SerializeField] private float randomRotationAmount = 30f;
+    [SerializeField] private float randomOffsetAmount = 0.3f;
+    private float[] layerSeeds;
+
+    private bool isThreatActive;
+
     private EnemyState currentState;
     private NavMeshAgent agent;
     private EnemyPerception perception;
@@ -58,6 +76,14 @@ public class ShadowEnemy : MonoBehaviour
         perception = GetComponent<EnemyPerception>();
 
         currentState = EnemyState.Idle;
+        baseScale = visualRoot.localScale;
+        basePosition = visualRoot.localPosition;
+        layerSeeds = new float[shadowLayers.Length];
+
+        for (int i = 0; i < shadowLayers.Length; i++)
+        {
+            layerSeeds[i] = Random.Range(0f, 100f);
+        }
 
         NoiseSystem.Instance.ClearSounds();
 
@@ -133,12 +159,53 @@ public class ShadowEnemy : MonoBehaviour
                 HandleRetreat();
                 break;
         }
+
+        ApplyShadowLife();
+    }
+    // =========================
+    // SHADOW LIFE
+    // =========================
+    void ApplyShadowLife()
+    {
+        float time = Time.time;
+
+        for (int i = 0; i < shadowLayers.Length; i++)
+        {
+            Transform layer = shadowLayers[i];
+            float seed = layerSeeds[i];
+
+            float t = time + seed;
+
+            //escala orgánica
+            float scaleX = 1 + Mathf.Sin(t * pulseSpeed) * pulseAmount;
+            float scaleY = 1 + Mathf.Cos(t * deformSpeed) * deformAmount;
+            float scaleZ = 1 + Mathf.Sin(t * deformSpeed * 0.7f) * deformAmount;
+
+            layer.localScale = new Vector3(scaleX, scaleY, scaleZ);
+
+            //offset fluido
+            Vector3 offset = new Vector3(
+                Mathf.Sin(t * 1.3f),
+                0,
+                Mathf.Cos(t * 1.1f)
+            ) * randomOffsetAmount;
+
+            layer.localPosition = offset;
+
+            //rotación suave
+            float rot = Mathf.Sin(t * 0.5f) * randomRotationAmount;
+            layer.localRotation = Quaternion.Euler(0, rot, 0);
+        }
     }
 
     // =========================
     // STATES
     // =========================
 
+    public bool IsChasing()
+    {
+        return currentState == EnemyState.Chase;
+    }
     void HandleIdle()
     {
         var sound = GetRelevantSound();
@@ -195,14 +262,15 @@ public class ShadowEnemy : MonoBehaviour
 
             if (loseSightTimer > loseSightTime)
             {
-                DebugLog("LOST PLAYER → INVESTIGATE");
+                isThreatActive = false;
                 currentState = EnemyState.Investigate;
-                investigateTimer = 0f;
-                lastKnownPosition = target.position;
             }
         }
     }
-
+    public bool IsThreatActive()
+    {
+        return isThreatActive;
+    }
     void HandleRetreat()
     {
         if (isHesitating)
@@ -265,7 +333,11 @@ public class ShadowEnemy : MonoBehaviour
     void SwitchToChase()
     {
         currentState = EnemyState.Chase;
-        DebugLog("→ CHASE");
+        isThreatActive = true;
+
+        Debug.Log("ENTER CHASE");
+
+        DebugLog("CHASE");
     }
 
     void SwitchToRetreat()
