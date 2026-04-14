@@ -163,10 +163,10 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3fe02e908802f3844abfb0f951f8f732, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0
+  m_PlayOnAwake: 0
+  m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -12983,10 +12983,10 @@ MonoBehaviour:
   ambientSource: {fileID: 387274173}
   whisperSource: {fileID: 1976148391}
   attackSource: {fileID: 3174855}
-  maxDistance: 15
   whisperDistance: 8
   attackDistance: 2.5
   fadeSpeed: 2
+  attackCooldown: 2
 --- !u!1 &1030904065
 GameObject:
   m_ObjectHideFlags: 0
@@ -27888,7 +27888,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3a6c83921fc14274080503ddd98b983f, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0
   m_Pitch: 1
   Loop: 1
