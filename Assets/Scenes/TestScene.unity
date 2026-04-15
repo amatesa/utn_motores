@@ -27713,6 +27713,11 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 3893294198953563689}
+    - target: {fileID: 327061557998573280, guid: 17141be5303417c4395aae2e02dfd2a7,
+        type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1034681769010792157, guid: 17141be5303417c4395aae2e02dfd2a7,
         type: 3}
       propertyPath: m_Layer
