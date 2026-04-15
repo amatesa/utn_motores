@@ -95,6 +95,14 @@ public class ShadowEnemy : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugEnabled = true;
 
+    [Header("Teleport System")]
+    [SerializeField] private float teleportMinDistance = 6f;
+    [SerializeField] private float teleportMaxDistance = 12f;
+    [SerializeField] private float teleportTriggerDistance = 15f;
+    [SerializeField] private float teleportNoStimulusTime = 10f;
+    [SerializeField] private int teleportMaxAttempts = 10;
+    [SerializeField] private float teleportHeightOffset = 1.2f;
+
     // =========================
     // VISUAL (SHADOW LIFE)
     // =========================
@@ -131,6 +139,7 @@ public class ShadowEnemy : MonoBehaviour
 
     private bool isHesitating;
     private bool isPaused;
+    private float noStimulusTimer;
 
     // =========================
     // HEARING
@@ -175,18 +184,12 @@ public class ShadowEnemy : MonoBehaviour
     {
         bool isPlayerSafe = PlayerSafeState.Instance.IsSafe;
 
-        // 1:
-        // Si el jugador entra en zona segura, se cancela persecución
         if (isPlayerSafe && currentState == EnemyState.Chase)
         {
             DebugLog("PLAYER SAFE → RETREAT");
             SwitchToRetreat();
-
         }
 
-
-        // 2:
-        // Visión tiene prioridad absoluta sobre estados pasivos
         if (perception != null && perception.CanSeePlayer() && !isPlayerSafe)
         {
             if (currentState != EnemyState.Chase)
@@ -195,10 +198,6 @@ public class ShadowEnemy : MonoBehaviour
             }
         }
 
-        // =========================
-        // VARIACIÓN DE VELOCIDAD
-        // =========================
-        // Hace que el enemigo no sea predecible
         speedTimer += Time.deltaTime;
         if (speedTimer > speedChangeInterval)
         {
@@ -206,10 +205,6 @@ public class ShadowEnemy : MonoBehaviour
             agent.speed = Random.Range(minSpeed, maxSpeed);
         }
 
-        // =========================
-        // SISTEMA DE PAUSAS
-        // =========================
-        // Solo en estados pasivos para generar tensión
         bool canPause = currentState == EnemyState.Idle || currentState == EnemyState.Investigate;
 
         if (canPause && !isPaused && Random.value < pauseChance * Time.deltaTime)
@@ -233,8 +228,18 @@ public class ShadowEnemy : MonoBehaviour
         }
 
         // =========================
+        // DETECCIÓN DE PUERTAS
+        // =========================
+        if (currentState == EnemyState.Chase || currentState == EnemyState.Investigate)
+        {
+            HandleDoorDetection();
+        }
+
+        // =========================
         // FSM
         // =========================
+        UpdateNoStimulusTimer();
+
         switch (currentState)
         {
             case EnemyState.Idle:
@@ -254,7 +259,6 @@ public class ShadowEnemy : MonoBehaviour
                 break;
         }
 
-        // Feedback visual siempre activo
         ApplyShadowLife();
     }
 
@@ -279,6 +283,91 @@ public class ShadowEnemy : MonoBehaviour
 
         // Sin estímulos → patrulla
         Patrol();
+
+        if (CanTeleport())
+        {
+            TryTeleport();
+        }
+    }
+
+    void UpdateNoStimulusTimer()
+    {
+        bool hasStimulus = false;
+
+        if (perception != null && perception.CanSeePlayer())
+            hasStimulus = true;
+
+        if (GetRelevantSound().HasValue)
+            hasStimulus = true;
+
+        if (hasStimulus)
+            noStimulusTimer = 0f;
+        else
+            noStimulusTimer += Time.deltaTime;
+    }
+
+    bool CanTeleport()
+    {
+        if (currentState != EnemyState.Idle)
+            return false;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, target.position);
+
+        bool farEnough = distanceToPlayer > teleportTriggerDistance;
+        bool noStimulus = noStimulusTimer > teleportNoStimulusTime;
+
+        return farEnough || noStimulus;
+    }
+
+    void TryTeleport()
+    {
+        for (int i = 0; i < teleportMaxAttempts; i++)
+        {
+            Vector3 randomDir = Random.insideUnitSphere.normalized;
+            randomDir.y = 0;
+
+            float distance = Random.Range(teleportMinDistance, teleportMaxDistance);
+            Vector3 candidate = target.position + randomDir * distance;
+
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                continue;
+
+            if (IsVisibleToPlayer(hit.position))
+                continue;
+
+            NavMeshPath path = new NavMeshPath();
+            if (!agent.CalculatePath(hit.position, path) || path.status != NavMeshPathStatus.PathComplete)
+                continue;
+
+            ExecuteTeleport(hit.position);
+            return;
+        }
+
+        DebugLog("TELEPORT FAILED");
+    }
+
+    bool IsVisibleToPlayer(Vector3 position)
+    {
+        if (target == null) return true;
+
+        Vector3 origin = target.position + Vector3.up * 1.5f;
+        Vector3 dir = (position - origin).normalized;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, 50f))
+        {
+            return hit.collider.gameObject == gameObject;
+        }
+
+        return false;
+    }
+
+    void ExecuteTeleport(Vector3 position)
+    {
+        DebugLog("TELEPORT");
+
+        agent.Warp(position);
+
+        noStimulusTimer = 0f;
     }
 
     void HandleInvestigate()
@@ -432,12 +521,15 @@ public class ShadowEnemy : MonoBehaviour
 
         foreach (var e in events)
         {
+            //IGNORAR eventos generados por este mismo enemigo
+            if (e.source == gameObject)
+                continue;
+
             float distance = Vector3.Distance(transform.position, e.position);
             float range = GetHearingRange(e.intensity);
 
             if (distance > range) continue;
 
-            // Se queda con el más reciente
             if (!latest.HasValue || e.time > latest.Value.time)
                 latest = e;
         }
@@ -511,6 +603,29 @@ public class ShadowEnemy : MonoBehaviour
 
             float rot = Mathf.Sin(t * 0.5f) * randomRotationAmount;
             layer.localRotation = Quaternion.Euler(0, rot, 0);
+        }
+    }
+
+    private void HandleDoorDetection()
+    {
+        // Solo tiene sentido si el agente se está moviendo
+        if (agent.velocity.magnitude < 0.1f) return;
+
+        RaycastHit hit;
+
+        Vector3 origin = transform.position + Vector3.up * 1.0f;
+        Vector3 direction = transform.forward;
+
+        if (Physics.Raycast(origin, direction, out hit, 1.5f))
+        {
+            Interactable interactable = hit.collider.GetComponent<Interactable>();
+
+            if (interactable != null)
+            {
+                DebugLog("DOOR DETECTED → INTERACT");
+
+                interactable.InteractFromEnemy(gameObject);
+            }
         }
     }
 

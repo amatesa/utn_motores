@@ -2,33 +2,28 @@ using UnityEngine;
 
 public class InteractionEmitter : MonoBehaviour
 {
-    [Header("Interaction")]
     [SerializeField] private float noiseIntensity = 10f;
+    [SerializeField] private SoundEmitterType emitterType;
 
-    [Header("Debug")]
-    [SerializeField] private bool debug = true;
-
+    // 
     public void Interact()
     {
-        EmitNoise();
+        EmitNoise(null);
     }
 
-    private void EmitNoise()
+    // 
+    public void Interact(GameObject instigator)
     {
-        if (NoiseSystem.Instance == null)
-        {
-            Debug.LogWarning("[INTERACTION] NoiseSystem missing");
-            return;
-        }
+        EmitNoise(instigator);
+    }
 
+    private void EmitNoise(GameObject instigator)
+    {
         NoiseSystem.Instance.EmitSound(
-             transform.position,
-             noiseIntensity,
-            SoundEmitterType.Player,
-            gameObject
-         );
-
-        if (debug)
-            Debug.Log($"[INTERACTION] Noise emitted at {transform.position} | intensity={noiseIntensity}");
+            transform.position,
+            noiseIntensity,
+            emitterType,
+            instigator != null ? instigator : gameObject
+        );
     }
 }

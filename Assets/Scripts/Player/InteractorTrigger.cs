@@ -15,7 +15,7 @@ public class InteractorTrigger : MonoBehaviour
 
     private void Update()
     {
-        // 🔹 Input System (tecla E)
+        // Input System (tecla E)
         if (currentInteractable != null && input != null && input.interact)
         {
             Debug.Log("[INTERACTOR] Interacting with: " + currentInteractable.name);

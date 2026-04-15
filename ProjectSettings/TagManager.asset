@@ -9,6 +9,8 @@ TagManager:
   - Wood
   - Metal
   - Grass
+  - Interactable
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -18,8 +20,8 @@ TagManager:
   - UI
   - SafeArea
   - Player
-  - 
-  - 
+  - Enemy
+  - Shard
   - 
   - 
   - 

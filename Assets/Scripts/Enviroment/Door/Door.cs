@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -10,9 +11,11 @@ public class Door : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip openSound;
+    [SerializeField] private AudioClip closeSound;
 
     [Header("AI")]
     [SerializeField] private bool enemyCanOpen = false;
+    [SerializeField] private float autoCloseDelay = 10f;
 
     [Header("Interaction")]
     [SerializeField] private InteractionEmitter interactionEmitter;
@@ -22,6 +25,8 @@ public class Door : MonoBehaviour
     private bool isMoving = false;
     private float targetAngle;
 
+    private Coroutine autoCloseCoroutine;
+
     private void Update()
     {
         if (isMoving)
@@ -30,35 +35,81 @@ public class Door : MonoBehaviour
         }
     }
 
+    // =========================
+    // PLAYER (compatibilidad)
+    // =========================
     public void UseDoor()
+    {
+        UseDoor(null);
+    }
+
+    // =========================
+    // NUEVO SISTEMA (con instigator)
+    // =========================
+    public void UseDoor(GameObject instigator)
     {
         if (isMoving) return;
 
         isOpen = !isOpen;
 
-        float direction = GetOpenDirection();
+        float direction = GetOpenDirection(instigator);
 
         targetAngle = isOpen ? openAngle * direction : 0f;
 
         isMoving = true;
 
-        audioSource.PlayOneShot(openSound);
+        // 🔊 SONIDO
+        if (isOpen)
+            audioSource.PlayOneShot(openSound);
+        else
+            audioSource.PlayOneShot(closeSound);
 
-        interactionEmitter?.Interact();
+        // 🔊 EMITIR RUIDO
+        if (interactionEmitter != null)
+        {
+            if (instigator != null)
+                interactionEmitter.Interact(instigator);
+            else
+                interactionEmitter.Interact();
+        }
+
+        // 🤖 AUTO CLOSE SI ENEMY
+        if (instigator != null && instigator.CompareTag("Enemy") && isOpen)
+        {
+            if (autoCloseCoroutine != null)
+                StopCoroutine(autoCloseCoroutine);
+
+            autoCloseCoroutine = StartCoroutine(AutoCloseRoutine());
+        }
     }
 
-    private float GetOpenDirection()
+    private IEnumerator AutoCloseRoutine()
     {
-        Vector3 toPlayer = player.position - pivot.position;
+        yield return new WaitForSeconds(autoCloseDelay);
 
-        // Ignorar altura (muy importante)
-        toPlayer.y = 0;
+        if (!isMoving && isOpen)
+        {
+            UseDoor(null); // cierre normal
+        }
+    }
+
+    private float GetOpenDirection(GameObject instigator)
+    {
+        Transform reference = player;
+
+        if (instigator != null)
+        {
+            reference = instigator.transform;
+        }
+
+        Vector3 toAgent = reference.position - pivot.position;
+        toAgent.y = 0;
 
         Vector3 right = pivot.right;
 
-        float dot = Vector3.Dot(-right, toPlayer);
+        float dot = Vector3.Dot(-right, toAgent);
 
-        Debug.Log("[DOOR] DOT RIGHT: " + dot);
+        Debug.Log("[DOOR] DOT (" + reference.name + "): " + dot);
 
         return (dot > 0) ? 1f : -1f;
     }
@@ -77,26 +128,15 @@ public class Door : MonoBehaviour
         }
     }
 
+    // =========================
     // USO PARA IA
+    // =========================
     public void OpenDoorFromAI(Transform agent)
     {
         if (!enemyCanOpen) return;
 
         if (isMoving) return;
 
-        isOpen = !isOpen;
-
-        Vector3 toAgent = agent.position - pivot.position;
-        float dot = Vector3.Dot(pivot.forward, toAgent);
-
-        float direction = (dot > 0) ? -1f : 1f;
-
-        targetAngle = isOpen ? openAngle * direction : 0f;
-
-        isMoving = true;
-
-        audioSource.PlayOneShot(openSound);
-
-        interactionEmitter?.Interact();
+        UseDoor(agent.gameObject);
     }
 }
