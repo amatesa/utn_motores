@@ -136,9 +136,8 @@ public class NoiseSystem : MonoBehaviour
     /// Crea un evento de sonido en el mundo (usable por IA)
     /// El método se tiene que aplicar a eventos que el enemigo pueda percibir, no a cada ruido del jugador.
     /// </summary>
-    public void EmitSound(Vector3 position, float intensity)
+    public void EmitSound(Vector3 position, float intensity, SoundEmitterType emitter, GameObject source)
     {
-        // Ignora sonidos muy débiles
         if (intensity < minEventIntensity)
         {
             if (debugEnabled)
@@ -146,7 +145,6 @@ public class NoiseSystem : MonoBehaviour
             return;
         }
 
-        // Evita spam de eventos muy cercanos
         if (soundEvents.Count > 0)
         {
             SoundEvent last = soundEvents[soundEvents.Count - 1];
@@ -160,14 +158,13 @@ public class NoiseSystem : MonoBehaviour
             }
         }
 
-        // Crea y guarda evento
-        SoundEvent soundEvent = new SoundEvent(position, intensity);
-        // Agrega el evento a la lista de eventos activos
+        SoundEvent soundEvent = new SoundEvent(position, intensity, emitter, source);
+
         soundEvents.Add(soundEvent);
 
         if (debugEnabled)
         {
-            Debug.Log($"[SoundEvent] CREATED → pos={position} intensity={intensity} total={soundEvents.Count}");
+            Debug.Log($"[SoundEvent] CREATED → {emitter} pos={position} intensity={intensity}");
         }
     }
 

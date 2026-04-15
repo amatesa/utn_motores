@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - CinemachineTarget
+  - Concrete
+  - Wood
+  - Metal
+  - Grass
   layers:
   - Default
   - TransparentFX

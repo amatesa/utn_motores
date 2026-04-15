@@ -67,7 +67,12 @@ public class NoiseEmitter : MonoBehaviour
         }
 
         // Envía evento al sistema de sonido
-        NoiseSystem.Instance.EmitSound(pos, intensity);
+        NoiseSystem.Instance.EmitSound(
+            pos,
+            intensity,
+            SoundEmitterType.Environment,
+            gameObject
+        );
 
         if (debugEnabled)
         {

@@ -13,6 +13,7 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
         public bool stealth;
+        public bool interact;
 
         [Header("Movement Settings")]
 		public bool analogMovement;
@@ -22,6 +23,14 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 #if ENABLE_INPUT_SYSTEM
+
+        public void OnInteract(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                interact = true;
+            }
+        }
         public void OnStealth(InputValue value)
         {
             stealth = value.isPressed;
