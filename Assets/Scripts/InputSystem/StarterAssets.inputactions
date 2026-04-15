@@ -241,7 +241,7 @@
                 {
                     "name": "",
                     "id": "e06a86db-f1f9-4ffc-91f5-52ad583a4400",
-                    "path": "<Keyboard>/c",
+                    "path": "<Keyboard>/q",
                     "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": ";KeyboardMouse",
