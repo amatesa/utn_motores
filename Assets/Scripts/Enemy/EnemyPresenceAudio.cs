@@ -32,7 +32,7 @@ public class EnemyPresenceAudio : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform player;
-    [SerializeField] private ShadowEnemy enemy;
+    [SerializeField] private ShadowEnemyBrain enemy;
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource ambientSource;
