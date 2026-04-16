@@ -14,6 +14,11 @@ public class ShadowEnemyTeleportController : MonoBehaviour
     [SerializeField] private float teleportNoStimulusTime = 10f;
     [SerializeField] private int teleportMaxAttempts = 10;
 
+    [Header("Hit Teleport")]
+    [SerializeField] private float hitTeleportMinDistance = 14f;
+    [SerializeField] private float hitTeleportMaxDistance = 24f;
+    [SerializeField] private int hitTeleportMaxAttempts = 18;
+
     [Header("Debug")]
     [SerializeField] private bool debugEnabled = true;
 
@@ -57,22 +62,67 @@ public class ShadowEnemyTeleportController : MonoBehaviour
         return farEnough || noStimulusTooLong;
     }
 
-    public void TryTeleport(Transform target, GameObject self)
+    public bool TryTeleport(Transform target, GameObject self)
     {
-        if (target == null) return;
+        return TryTeleportInternal(target, self, teleportMinDistance, teleportMaxDistance, teleportMaxAttempts, true);
+    }
 
-        for (int i = 0; i < teleportMaxAttempts; i++)
+    public bool TeleportAfterPlayerHit(Transform player, GameObject self, bool resetTemporalReference = true)
+    {
+        if (player == null)
+            return false;
+
+        bool teleported = TryTeleportInternal(
+            player,
+            self,
+            hitTeleportMinDistance,
+            hitTeleportMaxDistance,
+            hitTeleportMaxAttempts,
+            false
+        );
+
+        if (resetTemporalReference)
+        {
+            // Reinicia referencia temporal para que una nueva colisión
+            // no quede bloqueada por temporizadores internos del sistema.
+            noStimulusTimer = 0f;
+        }
+
+        if (debugEnabled)
+        {
+            Debug.Log($"[ENEMY][TELEPORT] TELEPORT AFTER PLAYER HIT => {(teleported ? "SUCCESS" : "FAILED")}");
+        }
+
+        return teleported;
+    }
+
+    private bool TryTeleportInternal(
+        Transform target,
+        GameObject self,
+        float minDistance,
+        float maxDistance,
+        int maxAttempts,
+        bool avoidPlayerVisibility)
+    {
+        if (target == null)
+            return false;
+
+        for (int i = 0; i < maxAttempts; i++)
         {
             Vector3 randomDir = Random.insideUnitSphere.normalized;
             randomDir.y = 0f;
 
-            float distance = Random.Range(teleportMinDistance, teleportMaxDistance);
+            float distance = Random.Range(minDistance, maxDistance);
             Vector3 candidate = target.position + randomDir * distance;
 
-            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas))
                 continue;
 
-            if (IsVisibleToPlayer(target, hit.position, self))
+            float finalDistance = Vector3.Distance(target.position, hit.position);
+            if (finalDistance < minDistance)
+                continue;
+
+            if (avoidPlayerVisibility && IsVisibleToPlayer(target, hit.position, self))
                 continue;
 
             if (!movement.TryCalculatePath(hit.position))
@@ -82,15 +132,17 @@ public class ShadowEnemyTeleportController : MonoBehaviour
             noStimulusTimer = 0f;
 
             if (debugEnabled)
-                Debug.Log("[ENEMY][TELEPORT] TELEPORT");
+                Debug.Log($"[ENEMY][TELEPORT] TELEPORT success at distance={finalDistance:F2}");
 
-            return;
+            return true;
         }
 
         if (debugEnabled)
-            Debug.Log("[ENEMY][TELEPORT] TELEPORT FAILED");
-    }
+            Debug.LogWarning("[ENEMY][TELEPORT] TELEPORT FAILED after all attempts");
 
+        return false;
+    }
+       
     private bool IsVisibleToPlayer(Transform player, Vector3 position, GameObject self)
     {
         Vector3 origin = player.position + Vector3.up * 1.5f;
