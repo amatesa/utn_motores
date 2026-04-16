@@ -6146,6 +6146,26 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &401589998 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4867472566541873160, guid: d100a9dcf09443d4c959f99093b46725,
+    type: 3}
+  m_PrefabInstance: {fileID: 938191829}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &401590002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401589998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05e7ed53ff22f9748922c7543e874e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionEmitter
+  noiseIntensity: 10
+  emitterType: 2
 --- !u!43 &420133449
 Mesh:
   m_ObjectHideFlags: 0
@@ -13047,6 +13067,11 @@ PrefabInstance:
       propertyPath: enemyCanOpen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 305894115710361132, guid: d100a9dcf09443d4c959f99093b46725,
+        type: 3}
+      propertyPath: interactionEmitter
+      value: 
+      objectReference: {fileID: 401590002}
     - target: {fileID: 832825522335608445, guid: d100a9dcf09443d4c959f99093b46725,
         type: 3}
       propertyPath: m_Name
@@ -13116,6 +13141,10 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4867472566541873160, guid: d100a9dcf09443d4c959f99093b46725,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 401590002}
     - targetCorrespondingSourceObject: {fileID: 8163547894571119285, guid: d100a9dcf09443d4c959f99093b46725,
         type: 3}
       insertIndex: -1
@@ -28579,6 +28608,11 @@ PrefabInstance:
         type: 3}
       propertyPath: enemyCanOpen
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 305894115710361132, guid: d100a9dcf09443d4c959f99093b46725,
+        type: 3}
+      propertyPath: interactionEmitter
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 832825522335608445, guid: d100a9dcf09443d4c959f99093b46725,
         type: 3}

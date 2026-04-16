@@ -20,7 +20,7 @@ public class InteractorTrigger : MonoBehaviour
         {
             Debug.Log("[INTERACTOR] Interacting with: " + currentInteractable.name);
 
-            currentInteractable.Interact();
+            currentInteractable.Interact(gameObject);
 
             // Reset para evitar spam
             input.interact = false;

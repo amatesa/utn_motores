@@ -8,10 +8,25 @@ public class Interactable : MonoBehaviour
     [Header("AI Interaction")]
     [SerializeField] private bool canEnemyInteract = false;
 
+    // NUEVO: Interacción con instigator
+    public void Interact(GameObject instigator)
+    {
+        Debug.Log("[INTERACTABLE] Interaction on: " + gameObject.name + " by " + instigator.name);
+
+        // Intentar emitir sonido contextual
+        InteractionEmitter emitter = GetComponentInParent<InteractionEmitter>();
+        if (emitter != null)
+        {
+            emitter.Interact(instigator);
+        }
+
+        onInteract?.Invoke();
+    }
+
+    // Mantener compatibilidad (opcional)
     public void Interact()
     {
-        Debug.Log("[INTERACTABLE] Player interaction on: " + gameObject.name);
-        onInteract?.Invoke();
+        Interact(gameObject); // fallback (no ideal)
     }
 
     // Interacción desde Enemy
@@ -21,7 +36,12 @@ public class Interactable : MonoBehaviour
 
         Debug.Log("[INTERACTABLE] Enemy interaction on: " + gameObject.name);
 
-        // Buscar Door en el objeto padre
+        InteractionEmitter emitter = GetComponentInParent<InteractionEmitter>();
+        if (emitter != null)
+        {
+            emitter.Interact(enemy);
+        }
+
         Door door = GetComponentInParent<Door>();
 
         if (door != null)
