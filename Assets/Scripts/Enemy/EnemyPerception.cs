@@ -109,28 +109,28 @@ public class EnemyPerception : MonoBehaviour
         // =========================
         // RAYCAST (VISIBILITY CHECK)
         // =========================
-        // Confirma que no hay obstáculos entre enemigo y jugador
-        // Funciona así: lanza un rayo desde el enemigo hacia el jugador, y verifica qué es lo primero que impacta.
-        // visionRange, obstacleMask | playerMask > el raycast solo detectará colisiones con capas de obstáculos o jugador,
-        // ignorando otras capas.
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, visionRange, obstacleMask | playerMask))
+        // Confirma que no hay obstáculos entre enemigo y el punto objetivo.
+        // IMPORTANTE:
+        // En FPS el target suele ser un punto/cámara sin collider, por eso no podemos
+        // depender de "pegarle" al layer del player para considerar visión válida.
+        // Si no hay obstáculo en la línea de visión hasta el target, el jugador es visible.
+        if (Physics.Raycast(origin, dir, out RaycastHit obstacleHit, distance, obstacleMask, QueryTriggerInteraction.Ignore))
         {
-            // Si el primer impacto es el jugador → visible
-            if (((1 << hit.collider.gameObject.layer) & playerMask) != 0)
-            {
-                DebugDraw(origin, dir, Color.green);
-                Debug.Log("[PERCEPTION] PLAYER DETECTED");
-                return true;
-            }
-            else
-            {
-                // Algo bloquea la visión (pared, objeto)
-                DebugDraw(origin, dir, Color.red);
-                Debug.Log("[PERCEPTION] BLOCKED BY " + hit.collider.name);
-            }
+            DebugDraw(origin, dir, Color.red);
+            Debug.Log("[PERCEPTION] BLOCKED BY " + obstacleHit.collider.name);
+            return false;
         }
 
-        return false;
+        // Debug opcional: intentamos verificar si hay collider del player en la trayectoria,
+        // pero ya no es requisito para detectar (evita falsos negativos en modo FPS).
+        if (playerMask.value != 0 && Physics.Raycast(origin, dir, out RaycastHit playerHit, distance, playerMask, QueryTriggerInteraction.Ignore))
+        {
+            Debug.Log("[PERCEPTION] PLAYER COLLIDER HIT: " + playerHit.collider.name);
+        }
+
+        DebugDraw(origin, dir, Color.green);
+        Debug.Log("[PERCEPTION] PLAYER DETECTED");
+        return true;
     }
 
     // =========================
