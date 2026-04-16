@@ -9746,7 +9746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &729791557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9773,7 +9773,7 @@ Transform:
   m_GameObject: {fileID: 729791556}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9922,7 +9922,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &779577301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11479,8 +11479,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 896884968}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.0000000053503326, z: -2.4768843e-10, w: 1}
-  m_LocalPosition: {x: 5.93, y: 1.549, z: -8.984}
+  m_LocalRotation: {x: 0.15565182, y: -0.038314246, z: 0.006041924, w: 0.9870502}
+  m_LocalPosition: {x: 6.052819, y: 2.1534476, z: -10.517646}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27732,6 +27732,16 @@ PrefabInstance:
       propertyPath: debugEnabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3208115643419768648, guid: 17141be5303417c4395aae2e02dfd2a7,
+        type: 3}
+      propertyPath: hitTeleportMaxDistance
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3208115643419768648, guid: 17141be5303417c4395aae2e02dfd2a7,
+        type: 3}
+      propertyPath: hitTeleportMinDistance
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7587175847774706035, guid: 17141be5303417c4395aae2e02dfd2a7,
         type: 3}
       propertyPath: player
@@ -27812,14 +27822,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLifeSystem
   maxLives: 3
   hitCooldown: 1.2
+  postRecoverImmunity: 0.6
   fadeOutDuration: 0.35
   blackoutDuration: 0.55
   fadeInDuration: 0.35
-  fadePlayerMesh: 0
+  fadePlayerMesh: 1
   screenFadeImage: {fileID: 0}
   blackoutColor: {r: 0, g: 0, b: 0, a: 1}
   blackoutAlpha: 0.92
-  postProcessVolume: {fileID: 779577301}
+  postProcessVolume: {fileID: 0}
   minSaturation: -90
   minContrast: -40
   minPostExposure: -1.25
@@ -27827,6 +27838,29 @@ MonoBehaviour:
   onGameOver:
     m_PersistentCalls:
       m_Calls: []
+--- !u!136 &3893294198953563701
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914783194}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &6866717558981656135
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28307,6 +28341,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3893294198953563700}
+    - targetCorrespondingSourceObject: {fileID: 4863416885130676685, guid: 6d42a46f1851035489b6b8853e99108e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3893294198953563701}
   m_SourcePrefab: {fileID: 100100000, guid: 6d42a46f1851035489b6b8853e99108e, type: 3}
 --- !u!4 &6915273160232818155 stripped
 Transform:
