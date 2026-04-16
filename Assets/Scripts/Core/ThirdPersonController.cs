@@ -81,6 +81,10 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        [Header("Camera Modes")]
+        [Tooltip("When enabled, character yaw follows mouse look instead of movement direction.")]
+        public bool FirstPersonMode = false;
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -212,6 +216,11 @@ namespace StarterAssets
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
+            if (FirstPersonMode)
+            {
+                transform.rotation = Quaternion.Euler(0.0f, _cinemachineTargetYaw, 0.0f);
+            }
+
             // Cinemachine will follow this target
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
@@ -261,28 +270,38 @@ namespace StarterAssets
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-            // input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 targetDirection;
 
-            if (_input.move != Vector2.zero)
+            if (FirstPersonMode)
             {
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-
-                // 🔥 ROTACIÓN MÁS LENTA EN STEALTH
-                float smoothTime = _input.stealth ? RotationSmoothTime * 2f : RotationSmoothTime;
-
-                float rotation = Mathf.SmoothDampAngle(
-                    transform.eulerAngles.y,
-                    _targetRotation,
-                    ref _rotationVelocity,
-                    smoothTime
-                );
-
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                // FPS movement: always use current character facing direction (mouse look controls yaw)
+                targetDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
             }
+            else
+            {
+                // input direction
+                Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+                if (_input.move != Vector2.zero)
+                {
+                    _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                                      _mainCamera.transform.eulerAngles.y;
+
+                    //ROTACIÓN MÁS LENTA EN STEALTH
+                    float smoothTime = _input.stealth ? RotationSmoothTime * 2f : RotationSmoothTime;
+
+                    float rotation = Mathf.SmoothDampAngle(
+                        transform.eulerAngles.y,
+                        _targetRotation,
+                        ref _rotationVelocity,
+                        smoothTime
+                    );
+
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
+
+                targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            }
 
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
@@ -368,6 +387,11 @@ namespace StarterAssets
             if (lfAngle < -360f) lfAngle += 360f;
             if (lfAngle > 360f) lfAngle -= 360f;
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
+        }
+
+        public void SetFirstPersonMode(bool isFirstPerson)
+        {
+            FirstPersonMode = isFirstPerson;
         }
 
         private void OnDrawGizmosSelected()

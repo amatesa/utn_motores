@@ -8,6 +8,7 @@ public class CameraSwitcher : MonoBehaviour
     public CinemachineCamera thirdPersonCam;
     public FirstPersonBodyVisibilityController bodyVisibilityController;
     public StarterAssetsInputs inputSource;
+    public ThirdPersonController thirdPersonController;
 
     private bool isFirstPerson = false;
 
@@ -26,6 +27,16 @@ public class CameraSwitcher : MonoBehaviour
         if (bodyVisibilityController == null)
         {
             bodyVisibilityController = FindFirstObjectByType<FirstPersonBodyVisibilityController>();
+        }
+
+        if (thirdPersonController == null)
+        {
+            thirdPersonController = GetComponentInParent<ThirdPersonController>();
+        }
+
+        if (thirdPersonController == null)
+        {
+            thirdPersonController = FindFirstObjectByType<ThirdPersonController>();
         }
     }
 
@@ -52,6 +63,7 @@ public class CameraSwitcher : MonoBehaviour
         firstPersonCam.Priority = 20;
         thirdPersonCam.Priority = 10;
         bodyVisibilityController?.SetFirstPersonMode(true);
+        thirdPersonController?.SetFirstPersonMode(true);
         isFirstPerson = true;
     }
 
@@ -60,6 +72,7 @@ public class CameraSwitcher : MonoBehaviour
         firstPersonCam.Priority = 10;
         thirdPersonCam.Priority = 20;
         bodyVisibilityController?.SetFirstPersonMode(false);
+        thirdPersonController?.SetFirstPersonMode(false);
         isFirstPerson = false;
     }
 }
