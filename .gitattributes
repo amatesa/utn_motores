@@ -1,19 +1,19 @@
-# Normalize all text files to LF
-* text=auto eol=lf
+# Default
+* text=auto
 
-# Unity specific files
-*.cs text
-*.shader text
-*.cginc text
+# Force LF for code
+*.cs text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
 
-*.unity text
-*.prefab text
-*.mat text
-*.asset text
+# Unity project files
+*.sln text eol=lf
+*.slnx text eol=lf
+*.csproj text eol=lf
 
-# Binary files (NO tocar)
+# Keep binary files untouched
 *.png binary
 *.jpg binary
 *.fbx binary
-*.mp3 binary
 *.wav binary
+*.mp3 binary
