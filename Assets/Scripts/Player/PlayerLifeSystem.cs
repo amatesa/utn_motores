@@ -142,7 +142,7 @@ public class PlayerLifeSystem : MonoBehaviour
         // Teleport inmediato para romper colisión física al inicio del golpe.
         if (enemyTeleport != null)
         {
-            bool firstTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, true);
+            bool firstTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
             DebugLog($"[PLAYER LIVES] First hit teleport => {(firstTeleport ? "SUCCESS" : "FAILED")}");
         }
         else
@@ -171,7 +171,7 @@ public class PlayerLifeSystem : MonoBehaviour
         // Teleport extra antes de devolver control, para evitar spawn cercano tras blackout.
         if (enemyTeleport != null)
         {
-            bool safetyTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, true);
+            bool safetyTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
             DebugLog($"[PLAYER LIVES] Safety teleport before wake-up => {(safetyTeleport ? "SUCCESS" : "FAILED")}");
         }
 
