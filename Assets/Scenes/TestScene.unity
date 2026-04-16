@@ -13588,6 +13588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraSwitcher
   firstPersonCam: {fileID: 605855978}
   thirdPersonCam: {fileID: 875155074}
+  bodyVisibilityController: {fileID: 0}
 --- !u!4 &956536311
 Transform:
   m_ObjectHideFlags: 0

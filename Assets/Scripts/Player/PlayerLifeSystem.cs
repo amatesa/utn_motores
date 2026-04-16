@@ -333,6 +333,7 @@ public class PlayerLifeSystem : MonoBehaviour
                 starterInputs.jump = false;
                 starterInputs.sprint = false;
                 starterInputs.stealth = false;
+                starterInputs.switchCamera = false;
             }
         }
 

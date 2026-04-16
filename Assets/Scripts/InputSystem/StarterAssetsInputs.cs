@@ -14,6 +14,7 @@ namespace StarterAssets
 		public bool sprint;
         public bool stealth;
         public bool interact;
+        public bool switchCamera;
 
         [Header("Movement Settings")]
 		public bool analogMovement;
@@ -34,6 +35,14 @@ namespace StarterAssets
         public void OnStealth(InputValue value)
         {
             stealth = value.isPressed;
+        }
+
+        public void OnSwitchCamera(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                switchCamera = true;
+            }
         }
         public void OnMove(InputValue value)
 		{

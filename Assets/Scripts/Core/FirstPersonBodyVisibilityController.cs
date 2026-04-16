@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 public class FirstPersonBodyVisibilityController : MonoBehaviour
 {
     [Header("Targets")]
+    [Tooltip("Si está vacío, intentará encontrar automáticamente el root del Player.")]
     [SerializeField] private Transform meshRoot;
     [SerializeField] private List<Renderer> explicitRenderers = new();
     [SerializeField] private List<Renderer> excludeRenderers = new();
@@ -72,7 +73,7 @@ public class FirstPersonBodyVisibilityController : MonoBehaviour
             return;
         }
 
-        Transform root = meshRoot != null ? meshRoot : transform;
+        Transform root = ResolveMeshRoot();
         Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
         foreach (Renderer rendererRef in renderers)
         {
@@ -88,5 +89,27 @@ public class FirstPersonBodyVisibilityController : MonoBehaviour
 
         _managedRenderers.Add(rendererRef);
         _originalShadowModes[rendererRef] = rendererRef.shadowCastingMode;
+    }
+
+    private Transform ResolveMeshRoot()
+    {
+        if (meshRoot != null)
+        {
+            return meshRoot;
+        }
+
+        CharacterController controllerInParents = GetComponentInParent<CharacterController>();
+        if (controllerInParents != null)
+        {
+            return controllerInParents.transform;
+        }
+
+        StarterAssets.StarterAssetsInputs playerInputs = FindFirstObjectByType<StarterAssets.StarterAssetsInputs>();
+        if (playerInputs != null)
+        {
+            return playerInputs.transform;
+        }
+
+        return transform;
     }
 }
