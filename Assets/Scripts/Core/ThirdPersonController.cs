@@ -114,7 +114,7 @@ namespace StarterAssets
         private Animator _animator;
         private CharacterController _controller;
         private StarterAssetsInputs _input;
-        private GameObject _mainCamera;
+        private Transform _mainCamera;
 
         private const float _threshold = 0.01f;
 
@@ -138,7 +138,10 @@ namespace StarterAssets
             // get a reference to our main camera
             if (_mainCamera == null)
             {
-                _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+                if (Camera.main != null)
+                {
+                    _mainCamera = Camera.main.transform;
+                }
             }
         }
 
@@ -154,7 +157,7 @@ namespace StarterAssets
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
-
+            RefreshCamera();
             AssignAnimationIDs();
 
             // reset our timeouts on start
@@ -175,7 +178,13 @@ namespace StarterAssets
         {
             CameraRotation();
         }
-
+        void RefreshCamera()
+        {
+            if (Camera.main != null)
+            {
+                _mainCamera = Camera.main.transform;
+            }
+        }
         private void AssignAnimationIDs()
         {
             _animIDSpeed = Animator.StringToHash("Speed");
@@ -282,10 +291,18 @@ namespace StarterAssets
                 // input direction
                 Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
+                if (_mainCamera == null)
+                {
+                    RefreshCamera();
+
+                    if (_mainCamera == null)
+                        return;
+                }
+
                 if (_input.move != Vector2.zero)
                 {
                     _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                      _mainCamera.transform.eulerAngles.y;
+                                      _mainCamera.eulerAngles.y;
 
                     //ROTACIÓN MÁS LENTA EN STEALTH
                     float smoothTime = _input.stealth ? RotationSmoothTime * 2f : RotationSmoothTime;

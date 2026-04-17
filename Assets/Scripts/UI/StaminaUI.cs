@@ -13,4 +13,8 @@ public class StaminaUI : MonoBehaviour
 
         staminaSlider.value = staminaSystem.CurrentStaminaNormalized;
     }
+    public void SetSystem(PlayerStaminaSystem sys)
+    {
+        staminaSystem = sys;
+    }
 }

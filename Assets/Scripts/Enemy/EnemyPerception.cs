@@ -58,6 +58,12 @@ public class EnemyPerception : MonoBehaviour
     /// <summary>
     /// Evalúa si el enemigo puede ver al jugador.
     /// </summary>
+    ///
+
+    public void SetTarget(Transform t)
+    {
+        target = t;
+    }
     public bool CanSeePlayer()
     {
         // Sin target no hay nada que detectar

@@ -7,8 +7,12 @@ public class LevelTransitionTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("[TRIGGER] Entered by: " + other.name);
+
         if (!other.CompareTag("Player"))
             return;
+
+        Debug.Log("[TRIGGER] PLAYER DETECTED");
 
         GameManager.Instance.LoadLevel(targetScene, spawnID);
     }

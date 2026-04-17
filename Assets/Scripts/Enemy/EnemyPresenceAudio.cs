@@ -72,6 +72,10 @@ public class EnemyPresenceAudio : MonoBehaviour
         HandleAttack(distance, isThreat);
     }
 
+    public void SetTarget(Transform t)
+    {
+        player = t;
+    }
     // =========================
     // AMBIENT (BASE CONSTANTE)
     // =========================

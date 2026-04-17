@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7497261637714022056}
   - component: {fileID: 7858290765281008238}
   - component: {fileID: 5948146133493527891}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Capsule (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 2921399505716328140}
   - component: {fileID: 3208115643419768648}
   - component: {fileID: 6032307301933177963}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: ShadowEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -193,14 +193,14 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 0.83580685
+  m_Height: 1.6980991
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: -0.09627819}
 --- !u!114 &7587175847774706035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,9 +218,9 @@ MonoBehaviour:
   ambientSource: {fileID: 4657355472260868454}
   whisperSource: {fileID: 2544786433250196169}
   attackSource: {fileID: 6889918881967159060}
-  whisperDistance: 8
+  whisperDistance: 12
   attackDistance: 2.5
-  fadeSpeed: 2
+  fadeSpeed: 3
   attackCooldown: 5
 --- !u!54 &6571350632582176137
 Rigidbody:
@@ -261,10 +261,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2efa48b575678264b97e946f6e5974b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemyMovementController
-  minSpeed: 2.5
-  maxSpeed: 4.5
+  minSpeed: 1.5
+  maxSpeed: 3.5
   speedChangeInterval: 2
-  pauseChance: 0.1
+  pauseChance: 0.2
   pauseDuration: 1.2
 --- !u!114 &8051409111771133062
 MonoBehaviour:
@@ -311,8 +311,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemyBrain
   target: {fileID: 0}
-  perception: {fileID: 0}
-  investigateDuration: 4
+  perception: {fileID: 1378989281141629247}
+  investigateDuration: 5
   loseSightTime: 2
   hesitationTime: 2
   fakeRetreatChance: 0.3
@@ -334,6 +334,9 @@ MonoBehaviour:
   teleportTriggerDistance: 30
   teleportNoStimulusTime: 15
   teleportMaxAttempts: 10
+  hitTeleportMinDistance: 25
+  hitTeleportMaxDistance: 30
+  hitTeleportMaxAttempts: 18
   debugEnabled: 1
 --- !u!114 &6032307301933177963
 MonoBehaviour:
@@ -359,7 +362,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1254375544191920839}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: VisualRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +400,7 @@ GameObject:
   - component: {fileID: 4672191007887858603}
   - component: {fileID: 2893886283154063184}
   - component: {fileID: 19100801152822515}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Capsule (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -487,7 +490,7 @@ GameObject:
   - component: {fileID: 8358922870650974807}
   - component: {fileID: 6607533418718469218}
   - component: {fileID: 3039431846906375345}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Capsule (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -577,7 +580,7 @@ GameObject:
   - component: {fileID: 5504870137693673568}
   - component: {fileID: 2649772762070158947}
   - component: {fileID: 6909612535947259002}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -667,7 +670,7 @@ GameObject:
   - component: {fileID: 8154840331553384264}
   - component: {fileID: 1158311416425313175}
   - component: {fileID: 921976396754586771}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: ShadowParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5501,7 +5504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5874737898771289889}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Audio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5536,7 +5539,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5291759417419498742}
   - component: {fileID: 2544786433250196169}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Whisper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5665,7 +5668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2289859522895792988}
   - component: {fileID: 4657355472260868454}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Ambient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5794,7 +5797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1321737669256489945}
   - component: {fileID: 6889918881967159060}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Attack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
