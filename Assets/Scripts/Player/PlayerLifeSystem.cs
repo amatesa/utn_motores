@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayerLifeSystem : MonoBehaviour
 {
     [Header("Lives")]
-    [SerializeField] private int maxLives = 3;
+    [SerializeField] private int maxLives = 4;
     [SerializeField] private float hitCooldown = 1.2f;
     [SerializeField] private float postRecoverImmunity = 0.6f;
 
@@ -38,6 +38,7 @@ public class PlayerLifeSystem : MonoBehaviour
 
     public int CurrentLives { get; private set; }
     public bool IsGameOver => CurrentLives <= 0;
+    public float CurrentLifeNormalized => (float)CurrentLives / maxLives;
 
     private StarterAssets.StarterAssetsInputs starterInputs;
     private StarterAssets.ThirdPersonController thirdPersonController;
@@ -46,7 +47,7 @@ public class PlayerLifeSystem : MonoBehaviour
     private Renderer[] cachedRenderers;
     private float hitCooldownTimer;
     private bool transitioning;
-
+    
     private ColorAdjustments colorAdjustments;
 
     private void Awake()

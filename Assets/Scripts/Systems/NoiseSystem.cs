@@ -166,6 +166,24 @@ public class NoiseSystem : MonoBehaviour
         {
             Debug.Log($"[SoundEvent] CREATED → {emitter} pos={position} intensity={intensity}");
         }
+
+        bool isPlayerSource = source != null && source.CompareTag("Player");
+
+        bool shouldAffectUI =
+            emitter == SoundEmitterType.Player ||
+            emitter == SoundEmitterType.Environment;
+
+        // Excluir Enemy
+        if (source != null && source.CompareTag("Enemy"))
+        {
+            shouldAffectUI = false;
+        }
+
+        if (shouldAffectUI)
+        {
+            AddNoise(intensity);
+        }
+        Debug.Log($"[NOISE_UI_TRIGGER] source={source.name} emitter={emitter}");
     }
 
     /// <summary>
