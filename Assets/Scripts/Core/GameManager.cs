@@ -14,7 +14,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string victoryOverScene = "VictoryScene";
     [SerializeField] private string gameOverScene = "GameOverScene";
 
-    private GameObject player;
+    [Header("Player Data")]
+    public int PlayerLives;
+    public int MaxPlayerLives = 4;
 
     private void Awake()
     {
@@ -23,10 +25,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            player = GameObject.FindGameObjectWithTag("Player");
-
-            if (player != null)
-                DontDestroyOnLoad(player);
+            InitializePlayerData();
         }
         else
         {
@@ -34,9 +33,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void InitializePlayerData()
+    {
+        if (PlayerLives <= 0)
+        {
+            PlayerLives = MaxPlayerLives;
+        }
+    }
+
     // =========================
     // LEVEL SYSTEM
     // =========================
+
     public void StartGame()
     {
         Time.timeScale = 1f;
@@ -61,8 +69,13 @@ public class GameManager : MonoBehaviour
 
     private void RepositionPlayer()
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
         if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player");
+        {
+            Debug.LogError("[GameManager] Player not found in scene");
+            return;
+        }
 
         LevelSpawnPoint[] points = FindObjectsByType<LevelSpawnPoint>(FindObjectsSortMode.None);
 
@@ -72,9 +85,11 @@ public class GameManager : MonoBehaviour
             {
                 player.transform.position = point.transform.position;
                 player.transform.rotation = point.transform.rotation;
-                break;
+                return;
             }
         }
+
+        Debug.LogWarning("[GameManager] No matching spawn point found for ID: " + LevelSpawnManager.NextSpawnID);
     }
 
     // =========================

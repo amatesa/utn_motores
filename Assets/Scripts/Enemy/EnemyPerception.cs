@@ -60,10 +60,6 @@ public class EnemyPerception : MonoBehaviour
     /// </summary>
     ///
 
-    public void SetTarget(Transform t)
-    {
-        target = t;
-    }
     public bool CanSeePlayer()
     {
         // Sin target no hay nada que detectar

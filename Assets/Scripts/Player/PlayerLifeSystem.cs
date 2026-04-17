@@ -19,7 +19,6 @@ public class PlayerLifeSystem : MonoBehaviour
     [SerializeField] private bool fadePlayerMesh = false;
 
     [Header("Screen Blackout (UI Overlay)")]
-    [Tooltip("Optional. If null, the script auto-creates a fullscreen overlay image at runtime.")]
     [SerializeField] private Image screenFadeImage;
     [SerializeField] private Color blackoutColor = new Color(0f, 0f, 0f, 1f);
     [SerializeField] private float blackoutAlpha = 0.92f;
@@ -47,12 +46,25 @@ public class PlayerLifeSystem : MonoBehaviour
     private Renderer[] cachedRenderers;
     private float hitCooldownTimer;
     private bool transitioning;
-    
+
     private ColorAdjustments colorAdjustments;
 
     private void Awake()
     {
-        CurrentLives = maxLives;
+        // 🔴 VIDA PERSISTENTE
+        if (GameManager.Instance != null)
+        {
+            maxLives = GameManager.Instance.MaxPlayerLives;
+
+            if (GameManager.Instance.PlayerLives <= 0)
+                GameManager.Instance.PlayerLives = maxLives;
+
+            CurrentLives = GameManager.Instance.PlayerLives;
+        }
+        else
+        {
+            CurrentLives = maxLives;
+        }
 
         starterInputs = GetComponent<StarterAssets.StarterAssetsInputs>();
         thirdPersonController = GetComponent<StarterAssets.ThirdPersonController>();
@@ -75,15 +87,13 @@ public class PlayerLifeSystem : MonoBehaviour
         EnsureScreenOverlay();
         SetOverlayAlpha(0f);
 
-        DebugLog($"[PLAYER LIVES] Init maxLives={maxLives}, currentLives={CurrentLives}");
+        DebugLog($"[PLAYER LIVES] Init currentLives={CurrentLives}");
     }
 
     private void Update()
     {
         if (hitCooldownTimer > 0f)
-        {
             hitCooldownTimer -= Time.deltaTime;
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -103,23 +113,8 @@ public class PlayerLifeSystem : MonoBehaviour
 
     private void TryHandleEnemyContact(GameObject contactedObject, string source)
     {
-        if (IsGameOver)
-        {
-            DebugLog($"[PLAYER LIVES] Ignored hit from {source}: game already over.");
+        if (IsGameOver || transitioning || hitCooldownTimer > 0f)
             return;
-        }
-
-        if (transitioning)
-        {
-            DebugLog($"[PLAYER LIVES] Ignored hit from {source}: transition in progress.");
-            return;
-        }
-
-        if (hitCooldownTimer > 0f)
-        {
-            DebugLog($"[PLAYER LIVES] Ignored hit from {source}: cooldown {hitCooldownTimer:F2}s left.");
-            return;
-        }
 
         ShadowEnemyTeleportController enemyTeleport = contactedObject.GetComponentInParent<ShadowEnemyTeleportController>();
         bool isEnemyTag = contactedObject.CompareTag("Enemy");
@@ -127,7 +122,8 @@ public class PlayerLifeSystem : MonoBehaviour
         if (enemyTeleport == null && !isEnemyTag)
             return;
 
-        DebugLog($"[PLAYER LIVES] Enemy contact detected from {source} ({contactedObject.name}). Lives before hit: {CurrentLives}");
+        DebugLog($"[PLAYER LIVES] Enemy contact detected from {source}");
+
         StartCoroutine(LoseLifeRoutine(enemyTeleport));
     }
 
@@ -140,15 +136,10 @@ public class PlayerLifeSystem : MonoBehaviour
 
         SetPlayerControlEnabled(false);
 
-        // Teleport inmediato para romper colisión física al inicio del golpe.
+        // ✅ TELEPORT INICIAL
         if (enemyTeleport != null)
         {
-            bool firstTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
-            DebugLog($"[PLAYER LIVES] First hit teleport => {(firstTeleport ? "SUCCESS" : "FAILED")}");
-        }
-        else
-        {
-            DebugLogWarning("[PLAYER LIVES] Enemy collision detected but no ShadowEnemyTeleportController was found.");
+            enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
         }
 
         if (fadePlayerMesh)
@@ -157,23 +148,24 @@ public class PlayerLifeSystem : MonoBehaviour
         yield return FadeScreen(0f, blackoutAlpha, fadeOutDuration);
         yield return new WaitForSeconds(blackoutDuration);
 
+        // 🔴 VIDA PERSISTENTE
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
-        DebugLog($"[PLAYER LIVES] Life lost. Remaining={CurrentLives}");
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.PlayerLives = CurrentLives;
 
         ApplyColorDegradation();
 
         if (CurrentLives <= 0)
         {
             onGameOver?.Invoke();
-            DebugLogWarning("[PLAYER LIVES] GAME OVER triggered.");
             yield break;
         }
 
-        // Teleport extra antes de devolver control, para evitar spawn cercano tras blackout.
+        // ✅ TELEPORT DE SEGURIDAD
         if (enemyTeleport != null)
         {
-            bool safetyTeleport = enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
-            DebugLog($"[PLAYER LIVES] Safety teleport before wake-up => {(safetyTeleport ? "SUCCESS" : "FAILED")}");
+            enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
         }
 
         if (fadePlayerMesh)
@@ -183,25 +175,15 @@ public class PlayerLifeSystem : MonoBehaviour
 
         SetPlayerControlEnabled(true);
         transitioning = false;
-
-        DebugLog($"[PLAYER LIVES] Recovery complete. Player controls enabled. Lives={CurrentLives}");
     }
 
     private IEnumerator FadeScreen(float fromAlpha, float toAlpha, float duration)
     {
         if (screenFadeImage == null)
-        {
-            DebugLogWarning("[PLAYER LIVES] No screenFadeImage assigned/created. Screen fade skipped.");
             yield break;
-        }
-
-        if (duration <= 0f)
-        {
-            SetOverlayAlpha(toAlpha);
-            yield break;
-        }
 
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -248,8 +230,6 @@ public class PlayerLifeSystem : MonoBehaviour
         rt.offsetMax = Vector2.zero;
 
         screenFadeImage.raycastTarget = false;
-
-        DebugLog("[PLAYER LIVES] Auto-created runtime screen fade overlay.");
     }
 
     private IEnumerator FadePlayer(float from, float to, float duration)
@@ -261,6 +241,7 @@ public class PlayerLifeSystem : MonoBehaviour
         }
 
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -279,8 +260,7 @@ public class PlayerLifeSystem : MonoBehaviour
         {
             if (rendererRef == null) continue;
 
-            Material[] mats = rendererRef.materials;
-            foreach (Material mat in mats)
+            foreach (Material mat in rendererRef.materials)
             {
                 if (mat == null) continue;
 
@@ -303,10 +283,7 @@ public class PlayerLifeSystem : MonoBehaviour
     private void ApplyColorDegradation()
     {
         if (colorAdjustments == null)
-        {
-            DebugLogWarning("[PLAYER LIVES] No ColorAdjustments override found in assigned/scene Volume. Color degradation skipped.");
             return;
-        }
 
         int livesLost = maxLives - CurrentLives;
         float normalizedLoss = Mathf.Clamp01((float)livesLost / maxLives);
@@ -318,8 +295,6 @@ public class PlayerLifeSystem : MonoBehaviour
         colorAdjustments.saturation.value = Mathf.Lerp(0f, minSaturation, normalizedLoss);
         colorAdjustments.contrast.value = Mathf.Lerp(0f, minContrast, normalizedLoss);
         colorAdjustments.postExposure.value = Mathf.Lerp(0f, minPostExposure, normalizedLoss);
-
-        DebugLog($"[PLAYER LIVES] PostFX updated. livesLost={livesLost}, saturation={colorAdjustments.saturation.value:F1}, contrast={colorAdjustments.contrast.value:F1}, exposure={colorAdjustments.postExposure.value:F2}");
     }
 
     private void SetPlayerControlEnabled(bool enabled)
@@ -327,6 +302,7 @@ public class PlayerLifeSystem : MonoBehaviour
         if (starterInputs != null)
         {
             starterInputs.enabled = enabled;
+
             if (!enabled)
             {
                 starterInputs.move = Vector2.zero;
@@ -343,19 +319,11 @@ public class PlayerLifeSystem : MonoBehaviour
 
         if (firstPersonController != null)
             firstPersonController.enabled = enabled;
-
-        DebugLog($"[PLAYER LIVES] Player controls {(enabled ? "ENABLED" : "DISABLED")}");
     }
 
     private void DebugLog(string message)
     {
-        if (!debugEnabled) return;
-        Debug.Log(message);
-    }
-
-    private void DebugLogWarning(string message)
-    {
-        if (!debugEnabled) return;
-        Debug.LogWarning(message);
+        if (debugEnabled)
+            Debug.Log(message);
     }
 }
