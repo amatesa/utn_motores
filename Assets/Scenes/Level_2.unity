@@ -1413,14 +1413,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630122780}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: 0, w: -0.7071068}
-  m_LocalPosition: {x: -1.46, y: 1.39, z: -2.77}
+  m_LocalRotation: {x: 0, y: 0, z: -0, w: -1}
+  m_LocalPosition: {x: 3.34, y: 1.25, z: 17.95}
   m_LocalScale: {x: 0.73458314, y: 0.73458314, z: 0.73458314}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1083111400}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -270, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -360, z: 0}
 --- !u!65 &630122786
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1846,65 +1846,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff8bd54ecaa33264c968e6c55faf152f, type: 3}
---- !u!1 &961391490
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 961391491}
-  - component: {fileID: 961391493}
-  - component: {fileID: 961391492}
-  m_Layer: 0
-  m_Name: Spawn_From_Level2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &961391491
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961391490}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3026.2922, y: 0.00001, z: 104454.21}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &961391492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961391490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f5593f929992245a8e375f3c708aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSpawnPoint
-  spawnID: ' FromLevel3'
---- !u!114 &961391493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961391490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f5593f929992245a8e375f3c708aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSpawnPoint
-  spawnID: FromLevel1
 --- !u!43 &991661518
 Mesh:
   m_ObjectHideFlags: 0
@@ -3361,6 +3302,39 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1221811970
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1221811971}
+  m_Layer: 0
+  m_Name: SpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1221811971
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1221811970}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.21603, y: 0.1, z: 10.42769}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2031310265}
+  - {fileID: 1410663502}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1301167212
 Mesh:
   m_ObjectHideFlags: 0
@@ -3816,7 +3790,7 @@ GameObject:
   - component: {fileID: 1410663502}
   - component: {fileID: 1410663501}
   m_Layer: 0
-  m_Name: Spawn_From_TestScene
+  m_Name: From_Stairs_Up
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3834,7 +3808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f5593f929992245a8e375f3c708aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSpawnPoint
-  spawnID: FromTestScene
+  spawnID: From_Stairs_Up
 --- !u!4 &1410663502
 Transform:
   m_ObjectHideFlags: 0
@@ -3843,12 +3817,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1410663500}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.22215, y: 1.89, z: 15.37}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.43818, y: 1.79, z: 4.9423103}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1221811971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1430792668
 Mesh:
@@ -6304,7 +6278,7 @@ PrefabInstance:
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.3851943
+      value: 4.2949123
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
@@ -6314,27 +6288,27 @@ PrefabInstance:
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 15.865302
+      value: 17.800589
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.63992643
+      value: 0.63992614
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.09123032
+      value: 0.091230236
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.75536394
+      value: -0.7553642
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.10768752
+      value: 0.1076875
       objectReference: {fileID: 0}
     - target: {fileID: 1944959620246318701, guid: 7bca4934c1c219a45a77cdf9385b4b13,
         type: 3}
@@ -6745,7 +6719,7 @@ PrefabInstance:
     - target: {fileID: 2786364280957969943, guid: 30d2278ab02cb714ba9aa90381ab5013,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.2072668
+      value: 3.1169846
       objectReference: {fileID: 0}
     - target: {fileID: 2786364280957969943, guid: 30d2278ab02cb714ba9aa90381ab5013,
         type: 3}
@@ -6755,7 +6729,7 @@ PrefabInstance:
     - target: {fileID: 2786364280957969943, guid: 30d2278ab02cb714ba9aa90381ab5013,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 15.68036
+      value: 17.615646
       objectReference: {fileID: 0}
     - target: {fileID: 2786364280957969943, guid: 30d2278ab02cb714ba9aa90381ab5013,
         type: 3}
@@ -6813,7 +6787,7 @@ GameObject:
   - component: {fileID: 2031310265}
   - component: {fileID: 2031310264}
   m_Layer: 0
-  m_Name: Spawn_From_Level_3
+  m_Name: From_Stairs_Down
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6831,7 +6805,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f5593f929992245a8e375f3c708aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSpawnPoint
-  spawnID: FromLevel_3
+  spawnID: From_Stairs_Down
 --- !u!4 &2031310265
 Transform:
   m_ObjectHideFlags: 0
@@ -6840,12 +6814,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031310263}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.83, y: 1.77, z: -1.23}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7260299, y: 1.67, z: -9.93769}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1221811971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2073155944 stripped
 GameObject:
@@ -7022,7 +6996,7 @@ PrefabInstance:
     - target: {fileID: 4381966671082415456, guid: 6d42a46f1851035489b6b8853e99108e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.2402823
+      value: 3.15
       objectReference: {fileID: 0}
     - target: {fileID: 4381966671082415456, guid: 6d42a46f1851035489b6b8853e99108e,
         type: 3}
@@ -7032,7 +7006,7 @@ PrefabInstance:
     - target: {fileID: 4381966671082415456, guid: 6d42a46f1851035489b6b8853e99108e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 15.694713
+      value: 17.63
       objectReference: {fileID: 0}
     - target: {fileID: 4381966671082415456, guid: 6d42a46f1851035489b6b8853e99108e,
         type: 3}
@@ -29603,7 +29577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelTransitionTrigger
   targetScene: TestScene
-  spawnID: FromLevel2
+  spawnID: From_Stairs
 --- !u!65 &8487726374485009464
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -32790,10 +32764,8 @@ SceneRoots:
   - {fileID: 2118700952}
   - {fileID: 43855766}
   - {fileID: 313953537288018162}
-  - {fileID: 8487726374485009462}
-  - {fileID: 630122785}
   - {fileID: 5190949483451986208}
-  - {fileID: 1410663502}
-  - {fileID: 2031310265}
-  - {fileID: 961391491}
   - {fileID: 2143578972}
+  - {fileID: 630122785}
+  - {fileID: 8487726374485009462}
+  - {fileID: 1221811971}

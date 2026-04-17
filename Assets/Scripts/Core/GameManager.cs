@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -18,19 +18,22 @@ public class GameManager : MonoBehaviour
     public int PlayerLives;
     public int MaxPlayerLives = 4;
 
+    private bool hasSceneTransition = false;
+
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            InitializePlayerData();
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        InitializePlayerData();
     }
 
     private void InitializePlayerData()
@@ -49,22 +52,26 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(testScene);
-        //SceneManager.LoadScene(firstLevelScene);
     }
 
     public void LoadLevel(string sceneName, string spawnID)
     {
-        LevelSpawnManager.SetNextSpawn(spawnID);
+        hasSceneTransition = true;
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        LevelSpawnManager.SetNextSpawn(spawnID);
+        Debug.Log("SET SPAWN: " + spawnID);
+
         SceneManager.LoadScene(sceneName);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (!hasSceneTransition)
+            return;
 
-        RepositionPlayer();
+        StartCoroutine(FinalReposition());
+
+        hasSceneTransition = false;
     }
 
     private void RepositionPlayer()
@@ -73,23 +80,32 @@ public class GameManager : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogError("[GameManager] Player not found in scene");
+            Debug.LogError("[GameManager] Player not found");
             return;
         }
+
+        string targetSpawn = LevelSpawnManager.NextSpawnID;
+
+        Debug.Log("[GameManager] Spawn buscado: " + targetSpawn);
 
         LevelSpawnPoint[] points = FindObjectsByType<LevelSpawnPoint>(FindObjectsSortMode.None);
 
         foreach (var point in points)
         {
-            if (point.SpawnID == LevelSpawnManager.NextSpawnID)
+            if (point.SpawnID == targetSpawn)
             {
-                player.transform.position = point.transform.position;
-                player.transform.rotation = point.transform.rotation;
+                Debug.Log("[GameManager] Spawn encontrado → mover antes del render");
+
+                player.transform.SetPositionAndRotation(
+                    point.transform.position,
+                    point.transform.rotation
+                );
+
                 return;
             }
         }
 
-        Debug.LogWarning("[GameManager] No matching spawn point found for ID: " + LevelSpawnManager.NextSpawnID);
+        Debug.LogWarning("[GameManager] Spawn no encontrado: " + targetSpawn);
     }
 
     // =========================
@@ -111,5 +127,48 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    private IEnumerator FinalReposition()
+    {
+        GameObject player = null;
+
+        while (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            yield return null;
+        }
+
+        var controller = player.GetComponent<CharacterController>();
+
+        // Desactivar controller
+        if (controller != null)
+            controller.enabled = false;
+
+        // Esperar 1 frame limpio
+        yield return null;
+
+        string targetSpawn = LevelSpawnManager.NextSpawnID;
+
+        LevelSpawnPoint[] points = FindObjectsByType<LevelSpawnPoint>(FindObjectsSortMode.None);
+
+        foreach (var point in points)
+        {
+            if (point.SpawnID == targetSpawn)
+            {
+                player.transform.position = point.transform.position;
+                player.transform.rotation = point.transform.rotation;
+                break;
+            }
+        }
+
+        // Resetear velocidad (CLAVE)
+        var rb = player.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.linearVelocity = Vector3.zero;
+
+        // Reactivar controller
+        if (controller != null)
+            controller.enabled = true;
     }
 }

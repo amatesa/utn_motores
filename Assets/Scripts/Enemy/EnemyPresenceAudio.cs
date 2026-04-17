@@ -64,7 +64,7 @@ public class EnemyPresenceAudio : MonoBehaviour
         bool isThreat = enemy != null && enemy.IsThreatActive();
 
         // DEBUG: útil para validar sistema en runtime
-        Debug.Log($"[AUDIO] dist={distance:F2} threat={isThreat}");
+        //Debug.Log($"[AUDIO] dist={distance:F2} threat={isThreat}");
 
         // Sistema por capas (cada una independiente)
         HandleAmbient();

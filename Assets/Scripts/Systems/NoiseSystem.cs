@@ -112,8 +112,8 @@ public class NoiseSystem : MonoBehaviour
         currentNoise += amount;
         currentNoise = Mathf.Clamp(currentNoise, 0, maxNoise); //Math.Clamp para evitar valores negativos o superiores al máximo
 
-        if (debugEnabled)
-            Debug.Log("[NoiseSystem] UI Noise = " + currentNoise);
+        //if (debugEnabled)
+          //  Debug.Log("[NoiseSystem] UI Noise = " + currentNoise);
     }
 
     /// <summary>
