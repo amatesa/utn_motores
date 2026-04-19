@@ -129,6 +129,12 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void TriggerVictory()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(victoryOverScene);
+    }
+
     private IEnumerator FinalReposition()
     {
         GameObject player = null;
