@@ -51,7 +51,7 @@ public class PlayerLifeSystem : MonoBehaviour
 
     private void Awake()
     {
-        // 🔴 VIDA PERSISTENTE
+        //VIDA PERSISTENTE
         if (GameManager.Instance != null)
         {
             maxLives = GameManager.Instance.MaxPlayerLives;
@@ -136,7 +136,7 @@ public class PlayerLifeSystem : MonoBehaviour
 
         SetPlayerControlEnabled(false);
 
-        // ✅ TELEPORT INICIAL
+        //TELEPORT INICIAL
         if (enemyTeleport != null)
         {
             enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
@@ -148,7 +148,7 @@ public class PlayerLifeSystem : MonoBehaviour
         yield return FadeScreen(0f, blackoutAlpha, fadeOutDuration);
         yield return new WaitForSeconds(blackoutDuration);
 
-        // 🔴 VIDA PERSISTENTE
+        //VIDA PERSISTENTE
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
 
         if (GameManager.Instance != null)
@@ -158,11 +158,19 @@ public class PlayerLifeSystem : MonoBehaviour
 
         if (CurrentLives <= 0)
         {
-            onGameOver?.Invoke();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.TriggerGameOver();
+            }
+            else
+            {
+                Debug.LogError("[PLAYER LIVES] GameManager not found");
+            }
+
             yield break;
         }
 
-        // ✅ TELEPORT DE SEGURIDAD
+        //TELEPORT DE SEGURIDAD
         if (enemyTeleport != null)
         {
             enemyTeleport.TeleportAfterPlayerHit(transform, enemyTeleport.gameObject, true);
