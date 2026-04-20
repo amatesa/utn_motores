@@ -101,7 +101,7 @@ public class PlayerFootstepAudio : MonoBehaviour
         }
         while (index == lastPlayedIndex);
 
-        audioSource.PlayOneShot(clips[index], footstepVolume);
+        audioSource.PlayOneShot(clips[index]);
 
         lastPlayedIndex = index;
     }

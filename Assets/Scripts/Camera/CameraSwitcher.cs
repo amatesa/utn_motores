@@ -42,7 +42,7 @@ public class CameraSwitcher : MonoBehaviour
 
     void Start()
     {
-        ActivateThirdPerson();
+        ActivateFirstPerson();
     }
 
     void Update()

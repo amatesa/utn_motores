@@ -82,9 +82,10 @@ public class EnemyPresenceAudio : MonoBehaviour
         // Nunca se apaga → evita silencio total
         // Genera incomodidad constante
         // Math.Lerp para transición suave (evita cambios bruscos)
+        float target = 0.6f;
         ambientSource.volume = Mathf.Lerp(
             ambientSource.volume,
-            0.6f,
+            target,
             Time.deltaTime * fadeSpeed
         );
     }
