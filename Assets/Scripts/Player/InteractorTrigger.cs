@@ -15,25 +15,29 @@ public class InteractorTrigger : MonoBehaviour
 
     private void Update()
     {
-        // Input System (tecla E)
-        if (currentInteractable != null && input != null && input.interact)
+        if (currentInteractable == null || input == null)
+            return;
+
+        // Detectar input correctamente
+        if (input.interact)
         {
             Debug.Log("[INTERACTOR] Interacting with: " + currentInteractable.name);
 
-            currentInteractable.Interact(gameObject);
+            currentInteractable.Interact(transform.root.gameObject);
 
-            // Reset para evitar spam
+            // IMPORTANTE: resetear DESPUÉS de usar
             input.interact = false;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Interactable interactable = other.GetComponent<Interactable>();
+        //FIX
+        Interactable interactable = other.GetComponentInParent<Interactable>();
 
         if (interactable != null)
         {
-            Debug.Log("[TRIGGER] Enter: " + other.name);
+            Debug.Log("[TRIGGER] Enter: " + interactable.name);
 
             currentInteractable = interactable;
             interactText.SetActive(true);
@@ -42,11 +46,11 @@ public class InteractorTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Interactable interactable = other.GetComponent<Interactable>();
+        Interactable interactable = other.GetComponentInParent<Interactable>();
 
         if (interactable != null && interactable == currentInteractable)
         {
-            Debug.Log("[TRIGGER] Exit: " + other.name);
+            Debug.Log("[TRIGGER] Exit: " + interactable.name);
 
             currentInteractable = null;
             interactText.SetActive(false);

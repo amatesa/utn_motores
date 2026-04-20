@@ -62,8 +62,18 @@ public class EnemyPerception : MonoBehaviour
 
     public bool CanSeePlayer()
     {
+        
         // Sin target no hay nada que detectar
         if (target == null) return false;
+
+        // Si el player esta escondido no lo detecta
+        if (PlayerHideState.Instance != null && PlayerHideState.Instance.IsHidden)
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] PLAYER HIDDEN");
+
+            return false;
+        }
 
         // Se eleva el origen para evitar problemas con el suelo
         Vector3 origin = transform.position + Vector3.up * 1.5f;

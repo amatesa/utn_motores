@@ -8,12 +8,28 @@ public class Interactable : MonoBehaviour
     [Header("AI Interaction")]
     [SerializeField] private bool canEnemyInteract = false;
 
-    // NUEVO: Interacción con instigator
+    private HideableSpot hideableSpot;
+
+    private void Awake()
+    {
+        hideableSpot = GetComponentInParent<HideableSpot>();
+    }
+
+    // =========================
+    // PLAYER INTERACTION
+    // =========================
     public void Interact(GameObject instigator)
     {
         Debug.Log("[INTERACTABLE] Interaction on: " + gameObject.name + " by " + instigator.name);
 
-        // Intentar emitir sonido contextual
+        // PRIORIDAD: HIDING
+        if (hideableSpot != null && instigator.CompareTag("Player"))
+        {
+            HandleHideInteraction(instigator);
+            return;
+        }
+
+        // SONIDO
         InteractionEmitter emitter = GetComponentInParent<InteractionEmitter>();
         if (emitter != null)
         {
@@ -23,13 +39,32 @@ public class Interactable : MonoBehaviour
         onInteract?.Invoke();
     }
 
-    // Mantener compatibilidad (opcional)
-    public void Interact()
+    private void HandleHideInteraction(GameObject player)
     {
-        Interact(gameObject); // fallback (no ideal)
+        if (PlayerHideState.Instance == null)
+            return;
+
+        if (PlayerHideState.Instance.IsHidden)
+        {
+            hideableSpot.ExitHide();
+        }
+        else
+        {
+            hideableSpot.EnterHide(player);
+        }
     }
 
-    // Interacción desde Enemy
+    // =========================
+    // COMPAT
+    // =========================
+    public void Interact()
+    {
+        Interact(gameObject);
+    }
+
+    // =========================
+    // ENEMY INTERACTION
+    // =========================
     public void InteractFromEnemy(GameObject enemy)
     {
         if (!canEnemyInteract) return;
