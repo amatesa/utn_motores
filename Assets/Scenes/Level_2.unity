@@ -5271,6 +5271,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: NavMeshSurface
       objectReference: {fileID: 0}
+    - target: {fileID: 335777764588330498, guid: bc0eeba2701c05d4291fbfa3498ffde3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3359572394344771408, guid: bc0eeba2701c05d4291fbfa3498ffde3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8516,6 +8521,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 5810091168996459950, guid: 30d2278ab02cb714ba9aa90381ab5013,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
