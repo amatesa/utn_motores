@@ -22,20 +22,38 @@ public class Interactable : MonoBehaviour
     {
         Debug.Log("[INTERACTABLE] Interaction on: " + gameObject.name + " by " + instigator.name);
 
-        // PRIORIDAD: HIDING
+        // =========================
+        // PRIORIDAD 1: ITEM
+        // =========================
+        CollectibleItem item = GetComponent<CollectibleItem>();
+
+        if (item != null && instigator.CompareTag("Player"))
+        {
+            item.Collect(instigator);
+            return;
+        }
+
+        // =========================
+        // PRIORIDAD 2: HIDING
+        // =========================
         if (hideableSpot != null && instigator.CompareTag("Player"))
         {
             HandleHideInteraction(instigator);
             return;
         }
 
+        // =========================
         // SONIDO
+        // =========================
         InteractionEmitter emitter = GetComponentInParent<InteractionEmitter>();
         if (emitter != null)
         {
             emitter.Interact(instigator);
         }
 
+        // =========================
+        // EVENTOS
+        // =========================
         onInteract?.Invoke();
     }
 

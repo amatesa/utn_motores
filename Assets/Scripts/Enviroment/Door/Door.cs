@@ -7,6 +7,7 @@ public class Door : MonoBehaviour
     [SerializeField] private Transform pivot;
     [SerializeField] private float openAngle = 90f;
     [SerializeField] private float speed = 4f;
+    private DoorLock doorLock;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -27,6 +28,10 @@ public class Door : MonoBehaviour
 
     private Coroutine autoCloseCoroutine;
 
+    private void Awake()
+    {
+        doorLock = GetComponent<DoorLock>();
+    }
     private void Update()
     {
         if (isMoving)
@@ -49,6 +54,25 @@ public class Door : MonoBehaviour
     public void UseDoor(GameObject instigator)
     {
         if (isMoving) return;
+
+        // =========================
+        // LOCK SYSTEM (PLAYER)
+        // =========================
+        if (doorLock != null)
+        {
+            GameObject playerObj = player != null ? player.gameObject : instigator;
+            Debug.Log("Instigator: " + (instigator != null ? instigator.name : "NULL"));
+            if (playerObj != null && playerObj.CompareTag("Player"))
+            {
+                bool canOpen = doorLock.TryUnlock(playerObj);
+
+                if (!canOpen)
+                {
+                    Debug.Log("[DOOR] Locked - cannot open");
+                    return;
+                }
+            }
+        }
 
         isOpen = !isOpen;
 
