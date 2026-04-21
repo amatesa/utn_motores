@@ -405,5 +405,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e0db84cfbd01a442bc4371d375824f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideCameraController
-  sensitivity: 2
+  sensitivity: 0.05
   verticalClamp: 0
