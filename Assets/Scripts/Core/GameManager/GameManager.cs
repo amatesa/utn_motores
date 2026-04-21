@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scenes")]
     [SerializeField] private string mainMenuScene = "MainMenu";
-    [SerializeField] private string testScene = "TestScene";
+    //[SerializeField] private string testScene = "TestScene";
     [SerializeField] private string firstLevelScene = "Level_1";
     [SerializeField] private string secondLevelScene = "Level_2";
     [SerializeField] private string thirdLevelScene = "Level_3";
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(testScene);
+        SceneManager.LoadScene(firstLevelScene);
     }
 
     public void LoadLevel(string sceneName, string spawnID)
