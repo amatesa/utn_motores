@@ -5205,6 +5205,12 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1712950877 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1991999891939364106, guid: 8182542caab5023499b5b33e172c1d56,
+    type: 3}
+  m_PrefabInstance: {fileID: 7021079354264798417}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1731411004
 Mesh:
   m_ObjectHideFlags: 0
@@ -11042,6 +11048,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bed
+      objectReference: {fileID: 0}
+    - target: {fileID: 7669243935685199015, guid: 6089f743f058a6c4f83027a580933da3,
+        type: 3}
+      propertyPath: sensitivity
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 8388656922011535930, guid: 6089f743f058a6c4f83027a580933da3,
         type: 3}
@@ -24612,6 +24623,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6991030300640187371, guid: 8182542caab5023499b5b33e172c1d56,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6991030300640187371, guid: 8182542caab5023499b5b33e172c1d56,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6991030300640187371, guid: 8182542caab5023499b5b33e172c1d56,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6991030300640187371, guid: 8182542caab5023499b5b33e172c1d56,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7086920295003483686, guid: 8182542caab5023499b5b33e172c1d56,
         type: 3}
       propertyPath: m_Name
@@ -24620,7 +24651,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1991999891939364106, guid: 8182542caab5023499b5b33e172c1d56,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8570935246412640428}
   m_SourcePrefab: {fileID: 100100000, guid: 8182542caab5023499b5b33e172c1d56, type: 3}
 --- !u!64 &7046969477073645174
 MeshCollider:
@@ -25142,22 +25177,22 @@ PrefabInstance:
     - target: {fileID: 2761787412421326132, guid: 28b00f0939ba23b41bf1fd1098a89453,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.58461475
+      value: 0.5861394
       objectReference: {fileID: 0}
     - target: {fileID: 2761787412421326132, guid: 28b00f0939ba23b41bf1fd1098a89453,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.042248327
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2761787412421326132, guid: 28b00f0939ba23b41bf1fd1098a89453,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.8081029
+      value: -0.8102103
       objectReference: {fileID: 0}
     - target: {fileID: 2761787412421326132, guid: 28b00f0939ba23b41bf1fd1098a89453,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.058399133
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3390797377087874096, guid: 28b00f0939ba23b41bf1fd1098a89453,
         type: 3}
@@ -26762,12 +26797,25 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 7021079354264798417}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1712950877}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
+--- !u!114 &8570935246412640428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712950877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4afa82ae3200b82408d605c3dbdd1e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineRotateWithFollowTarget
+  Damping: 0
 --- !u!33 &8646372631815783199
 MeshFilter:
   m_ObjectHideFlags: 0
