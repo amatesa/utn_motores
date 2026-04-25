@@ -410,13 +410,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1991999891939364106}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.07207898, y: 0.0000000053185625, z: -6.326907e-10, w: 0.9973989}
-  m_LocalPosition: {x: 0, y: 1.538, z: 0.03600025}
+  m_LocalRotation: {x: 0.15555269, y: -0, z: 0.0000000037252899, w: 0.98782766}
+  m_LocalPosition: {x: 0.0000002430752, y: 1.538, z: 0.036000103}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5859782983120853412}
-  m_LocalEulerAnglesHint: {x: 8.267, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 17.898, y: 0, z: 0}
 --- !u!114 &16583960511965142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1984,9 +1984,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7086920295003483686}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.8102102, z: -0, w: 0.5861393}
+  m_LocalRotation: {x: 0, y: -0.8102104, z: 0, w: 0.58613914}
   m_LocalPosition: {x: 1.09715, y: 0, z: 8.679884}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6105000356923166464}
@@ -2432,7 +2432,7 @@ MonoBehaviour:
   onGameOver:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7936632993278651022, guid: 93be1b394cb67f642be9ed10a03fe3b3,
+      - m_Target: {fileID: 7953041268605405412, guid: 85fc47d3940e7e946828ddf44bfbac0f,
           type: 3}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: TriggerGameOver
@@ -2945,10 +2945,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.76683235
+  m_Radius: 0.44770595
   m_Height: 2.1987977
   m_Direction: 1
-  m_Center: {x: 0, y: -0.41871333, z: 0.0075263977}
+  m_Center: {x: 0.0000000024613969, y: -0.41871333, z: 0.07994359}
 --- !u!54 &1516505380855420943
 Rigidbody:
   m_ObjectHideFlags: 0
