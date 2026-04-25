@@ -65,7 +65,7 @@ public class NoiseECG_UI : MonoBehaviour
 
         float spike = GenerateSpike(currentNoise);
 
-        // 🔴 CLAMP IMPORTANTE
+       
         spike = Mathf.Clamp(spike, -maxDisplacement, maxDisplacement);
 
         buffer[buffer.Length - 1] = spike;
