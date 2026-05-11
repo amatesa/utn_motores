@@ -146,9 +146,9 @@
       }
     },
     "com.unity.render-pipelines.universal": {
-      "version": "17.3.0",
+      "version": "file:D:/Proyectos/Unity/Custom URP/com.unity.render-pipelines.universal-17.3.0.tgz",
       "depth": 0,
-      "source": "builtin",
+      "source": "local-tarball",
       "dependencies": {
         "com.unity.render-pipelines.core": "17.3.0",
         "com.unity.shadergraph": "17.3.0",
