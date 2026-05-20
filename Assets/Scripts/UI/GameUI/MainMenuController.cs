@@ -10,11 +10,11 @@ public class MainMenuController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject mainMenuUI;
     [SerializeField] private GameObject coverImage;
-    [SerializeField] private GameObject skipMessage; // NUEVO
+    [SerializeField] private GameObject skipMessage;
     [SerializeField] private AudioSource menuMusic;
 
     [Header("Input")]
-    [SerializeField] private InputActionReference skipAction; // NUEVO
+    [SerializeField] private InputActionReference skipAction;
 
     private bool isPlaying = false;
     private bool videoReady = false;
@@ -35,8 +35,8 @@ public class MainMenuController : MonoBehaviour
     {
         if (introVideo != null)
         {
-            introVideo.gameObject.SetActive(true); // IMPORTANTE
-            introVideo.Prepare(); // FIX PARPADEO
+            introVideo.gameObject.SetActive(true); 
+            introVideo.Prepare(); 
 
             introVideo.prepareCompleted += OnVideoPrepared;
             introVideo.loopPointReached += OnVideoFinished;

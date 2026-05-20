@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 #endif
 
-/* Note: animations are called via the controller for both the character and capsule using animator null checks
- */
+
 
 namespace StarterAssets
 {
@@ -135,7 +134,7 @@ namespace StarterAssets
 
         private void Awake()
         {
-            // get a reference to our main camera
+            
             if (_mainCamera == null)
             {
                 if (Camera.main != null)
@@ -160,7 +159,7 @@ namespace StarterAssets
             RefreshCamera();
             AssignAnimationIDs();
 
-            // reset our timeouts on start
+            
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
         }
@@ -196,13 +195,13 @@ namespace StarterAssets
 
         private void GroundedCheck()
         {
-            // set sphere position, with offset
+            
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
                 transform.position.z);
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
 
-            // update animator if using character
+            
             if (_hasAnimator)
             {
                 _animator.SetBool(_animIDGrounded, Grounded);
@@ -211,17 +210,17 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
-            // if there is an input and camera position is not fixed
+            
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
-                //Don't multiply mouse input by Time.deltaTime;
+                
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
                 _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
             }
 
-            // clamp our rotations so our values are limited 360 degrees
+            
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
@@ -230,14 +229,14 @@ namespace StarterAssets
                 transform.rotation = Quaternion.Euler(0.0f, _cinemachineTargetYaw, 0.0f);
             }
 
-            // Cinemachine will follow this target
+            
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
         }
 
         private void Move()
         {
-            // set target speed based on movement state
+            
             float targetSpeed;
 
             if (_input.stealth)
@@ -253,16 +252,16 @@ namespace StarterAssets
                 targetSpeed = MoveSpeed;
             }
 
-            // if no input, stop
+            
             if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
-            // current horizontal speed
+            
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
             float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
-            // accelerate / decelerate
+            
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
             {
@@ -283,12 +282,12 @@ namespace StarterAssets
 
             if (FirstPersonMode)
             {
-                // FPS movement: always use current character facing direction (mouse look controls yaw)
+                
                 targetDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
             }
             else
             {
-                // input direction
+                
                 Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
                 if (_mainCamera == null)
@@ -334,17 +333,17 @@ namespace StarterAssets
         {
             if (Grounded)
             {
-                // reset the fall timeout timer
+                
                 _fallTimeoutDelta = FallTimeout;
 
-                // update animator if using character
+                
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDJump, false);
                     _animator.SetBool(_animIDFreeFall, false);
                 }
 
-                // stop our velocity dropping infinitely when grounded
+                
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -2f;
@@ -353,10 +352,10 @@ namespace StarterAssets
                 // Jump
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
+                    
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
-                    // update animator if using character
+                    
                     if (_hasAnimator)
                     {
                         _animator.SetBool(_animIDJump, true);

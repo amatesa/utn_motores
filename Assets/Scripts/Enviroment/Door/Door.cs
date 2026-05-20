@@ -82,13 +82,13 @@ public class Door : MonoBehaviour
 
         isMoving = true;
 
-        // 🔊 SONIDO
+        
         if (isOpen)
             audioSource.PlayOneShot(openSound);
         else
             audioSource.PlayOneShot(closeSound);
 
-        // 🔊 EMITIR RUIDO
+        
         if (interactionEmitter != null)
         {
             if (instigator != null)
@@ -97,7 +97,7 @@ public class Door : MonoBehaviour
                 interactionEmitter.Interact();
         }
 
-        // 🤖 AUTO CLOSE SI ENEMY
+        
         if (instigator != null && instigator.CompareTag("Enemy") && isOpen)
         {
             if (autoCloseCoroutine != null)

@@ -14,7 +14,7 @@ public class PauseController : MonoBehaviour
     [SerializeField] private OptionsController optionsController;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource pauseMusic; // NUEVO
+    [SerializeField] private AudioSource pauseMusic; 
 
     private bool isPaused = false;
 
