@@ -21,6 +21,7 @@ public class Interactable : MonoBehaviour
     public void Interact(GameObject instigator)
     {
         Debug.Log("[INTERACTABLE] Interaction on: " + gameObject.name + " by " + instigator.name);
+        
 
         // =========================
         // PRIORIDAD 1: ITEM
@@ -59,16 +60,20 @@ public class Interactable : MonoBehaviour
 
     private void HandleHideInteraction(GameObject player)
     {
+        GameObject playerMesh = player.transform.Find("Character_Mesh").gameObject;
+
         if (PlayerHideState.Instance == null)
             return;
 
         if (PlayerHideState.Instance.IsHidden)
         {
+            playerMesh.SetActive(true);
             hideableSpot.ExitHide();
         }
         else
         {
             hideableSpot.EnterHide(player);
+            playerMesh.SetActive(false);
         }
     }
 
