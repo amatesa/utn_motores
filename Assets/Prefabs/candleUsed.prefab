@@ -159,5 +159,9 @@ MonoBehaviour:
   inventory: {fileID: 0}
   destroyAfterPickup: 1
   showPickupThought: 1
-  pickupThought: A candle. I should save it.
+  pickupThought: "Una vela... deber\xEDa guardarla."
+  thoughtDuration: 4
+  thoughtPriority: 1
+  canInterrupt: 0
+  thoughtType: 1
   logDebugMessages: 0
