@@ -2,22 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Player lantern controller. The lantern spends candle fuel to create a
-/// temporary pressure-relief zone, but it does not make the player invisible or
-/// permanently disable enemies.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class LanternController : MonoBehaviour
 {
-    /// <summary>
-    /// Raised when the lantern state changes. Parameters are old state, new state.
-    /// </summary>
+
     public event Action<LanternState, LanternState> OnLanternStateChanged;
 
-    /// <summary>
-    /// Raised whenever fuel changes. Parameters are current fuel, max fuel.
-    /// </summary>
     public event Action<float, float> OnFuelChanged;
 
     [Header("References")]
@@ -56,12 +47,15 @@ public class LanternController : MonoBehaviour
 
     [Header("Thoughts")]
     [SerializeField] private bool showThoughts = true;
+
     [TextArea]
-    [SerializeField] private string noCandlesThought = "I don't have any candles left.";
+    [SerializeField] private string noCandlesThought = "No me quedan velas...";
+
     [TextArea]
-    [SerializeField] private string fadingThought = "The lantern is fading...";
+    [SerializeField] private string fadingThought = "La llama se está apagando...";
+
     [TextArea]
-    [SerializeField] private string unstableThought = "The flame is unstable.";
+    [SerializeField] private string unstableThought = "La llama no resistirá mucho más...";
 
     [Header("Debug")]
     [SerializeField] private bool logDebugMessages = false;
@@ -441,10 +435,25 @@ public class LanternController : MonoBehaviour
 
     private void ShowThought(string message, int priority, bool canInterrupt)
     {
-        if (!showThoughts || string.IsNullOrWhiteSpace(message) || ThoughtPopupSystem.Instance == null)
+        if (!showThoughts ||
+            string.IsNullOrWhiteSpace(message) ||
+            ThoughtPopupSystem.Instance == null)
+        {
             return;
+        }
 
-        ThoughtPopupSystem.Instance.ShowThought(message, 3f, priority, canInterrupt);
+        ThoughtType type = ThoughtType.System;
+
+        if (priority >= 5)
+            type = ThoughtType.Danger;
+
+        ThoughtPopupSystem.Instance.ShowThought(
+            message,
+            3f,
+            priority,
+            canInterrupt,
+            type
+        );
     }
 
     [ContextMenu("Debug/Toggle Lantern")]
