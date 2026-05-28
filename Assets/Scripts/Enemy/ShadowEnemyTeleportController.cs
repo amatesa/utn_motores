@@ -24,10 +24,22 @@ public class ShadowEnemyTeleportController : MonoBehaviour
 
     private ShadowEnemyMovementController movement;
     private float noStimulusTimer;
+    private float baseTeleportNoStimulusTime;
 
     private void Awake()
     {
         movement = GetComponent<ShadowEnemyMovementController>();
+        baseTeleportNoStimulusTime = teleportNoStimulusTime;
+    }
+
+    /// <summary>
+    /// Applies runtime teleport frequency tuning. Higher values make the enemy
+    /// eligible to teleport sooner after losing stimuli.
+    /// </summary>
+    public void ApplyTeleportFrequency(float multiplier)
+    {
+        multiplier = Mathf.Max(0.1f, multiplier);
+        teleportNoStimulusTime = baseTeleportNoStimulusTime / multiplier;
     }
 
     public bool CanTeleport(EnemyState state, Transform target, EnemyPerception perception, Vector3 selfPosition, GameObject self)

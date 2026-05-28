@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31e43774898e4912a8ad675c3d2a9a65, type: 3}
+  m_Name: Aggression_High
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAggressionProfile
+  aggressionLevel: 2
+  displayName: High Aggression
+  movementSpeedMultiplier: 1.25
+  hearingSensitivity: 1.4
+  chasePersistence: 1.35
+  teleportFrequency: 1.4
+  retreatResistance: 0.35
+  hesitationDuration: 0.9
+  lanternResistance: 0.35
+  searchDuration: 1.4
+  stalkingPressure: 0.65

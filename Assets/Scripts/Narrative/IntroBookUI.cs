@@ -1,0 +1,146 @@
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// Canvas presenter for the intro book sequence.
+/// Owns page rendering and fade transitions only.
+/// </summary>
+[DisallowMultipleComponent]
+[RequireComponent(typeof(CanvasGroup))]
+public class IntroBookUI : MonoBehaviour
+{
+    [Header("Text")]
+    [SerializeField] private TextMeshProUGUI pageText;
+    [SerializeField] private TextMeshProUGUI pageCounterText;
+
+    [Header("Image")]
+    [SerializeField] private Image pageImage;
+
+    [Header("Navigation")]
+    [SerializeField] private Button previousButton;
+    [SerializeField] private Button nextButton;
+    [SerializeField] private Button closeButton;
+
+    [Header("Transition")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float fadeInDuration = 0.3f;
+    [SerializeField] private float fadeOutDuration = 0.3f;
+
+    private Coroutine transitionRoutine;
+
+    private void Awake()
+    {
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
+
+        HideImmediate();
+    }
+
+    /// <summary>
+    /// Renders the current intro book page and navigation state.
+    /// </summary>
+    public void Render(IntroBookPageData page, int pageIndex, int pageCount)
+    {
+        if (page == null)
+            return;
+
+        if (pageText != null)
+            pageText.text = page.PageText;
+
+        if (pageCounterText != null)
+            pageCounterText.text = pageCount > 1 ? $"{pageIndex + 1} / {pageCount}" : string.Empty;
+
+        if (pageImage != null)
+        {
+            pageImage.sprite = page.PageImage;
+            pageImage.enabled = page.PageImage != null;
+        }
+
+        bool hasMultiplePages = pageCount > 1;
+
+        if (previousButton != null)
+        {
+            previousButton.gameObject.SetActive(hasMultiplePages);
+            previousButton.interactable = pageIndex > 0;
+        }
+
+        if (nextButton != null)
+        {
+            nextButton.gameObject.SetActive(hasMultiplePages);
+            nextButton.interactable = pageIndex < pageCount - 1;
+        }
+
+        if (closeButton != null)
+            closeButton.interactable = true;
+    }
+
+    /// <summary>
+    /// Fades the intro book into view.
+    /// </summary>
+    public void Show()
+    {
+        StartTransition(1f, fadeInDuration);
+    }
+
+    /// <summary>
+    /// Fades the intro book out of view.
+    /// </summary>
+    public void Hide()
+    {
+        StartTransition(0f, fadeOutDuration);
+    }
+
+    private void StartTransition(float targetAlpha, float duration)
+    {
+        if (transitionRoutine != null)
+            StopCoroutine(transitionRoutine);
+
+        transitionRoutine = StartCoroutine(FadeTo(targetAlpha, duration));
+    }
+
+    private IEnumerator FadeTo(float targetAlpha, float duration)
+    {
+        if (canvasGroup == null)
+            yield break;
+
+        float startAlpha = canvasGroup.alpha;
+        float elapsed = 0f;
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
+
+        if (duration <= 0f)
+        {
+            canvasGroup.alpha = targetAlpha;
+        }
+        else
+        {
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+                yield return null;
+            }
+
+            canvasGroup.alpha = targetAlpha;
+        }
+
+        bool visible = canvasGroup.alpha > 0.01f;
+        canvasGroup.blocksRaycasts = visible;
+        canvasGroup.interactable = visible;
+        transitionRoutine = null;
+    }
+
+    private void HideImmediate()
+    {
+        if (canvasGroup == null)
+            return;
+
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+}

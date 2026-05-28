@@ -5292,6 +5292,8 @@ GameObject:
   - component: {fileID: 8075828841313147454}
   - component: {fileID: 6448776269113922153}
   - component: {fileID: 7793072547877485409}
+  - component: {fileID: 1451361703405677712}
+  - component: {fileID: 1708325825933786375}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -5458,7 +5460,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 672313404d012be4c985b7e4ac0fd9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemyHearingSensor
-  debugEnabled: 1
+  debugEnabled: 0
+  hearingSensitivityMultiplier: 1
 --- !u!114 &8210103525943186579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5496,6 +5499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemyBrain
   target: {fileID: 0}
   perception: {fileID: 765109880935083444}
+  lanternResponder: {fileID: 0}
   investigateDuration: 5
   loseSightTime: 2
   hesitationTime: 2
@@ -5517,11 +5521,11 @@ MonoBehaviour:
   teleportMaxDistance: 25
   teleportTriggerDistance: 30
   teleportNoStimulusTime: 15
-  teleportMaxAttempts: 10
+  teleportMaxAttempts: 50
   hitTeleportMinDistance: 25
   hitTeleportMaxDistance: 30
   hitTeleportMaxAttempts: 18
-  debugEnabled: 1
+  debugEnabled: 0
 --- !u!114 &7793072547877485409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5534,9 +5538,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa76f568c65e8e4d9e7760c3b15a1e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShadowEnemyDoorInteractor
-  interactDistance: 1.5
-  originHeight: 1.5
-  debugEnabled: 1
+  interactDistance: 2
+  originHeight: 1
+  debugEnabled: 0
+--- !u!114 &1451361703405677712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5712158679402006666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 011ff7af48d72434c968a4954ae8c69c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLanternResponder
+  brain: {fileID: 8075828841313147454}
+  aggressionController: {fileID: 0}
+  lanternZone: {fileID: 0}
+  retreatTriggerDistance: 4
+  debugEnabled: 0
+--- !u!114 &1708325825933786375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5712158679402006666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98115c5e8e9e47ff9b181efbc0d5ad80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAggressionController
+  lowAggression: {fileID: 11400000, guid: 9c656e52745978449afa4c3340018eac, type: 2}
+  moderateAggression: {fileID: 11400000, guid: dede759e8eaebd94eb06fef420602f0d, type: 2}
+  highAggression: {fileID: 11400000, guid: d6fcb17c53bab50458066a95d25c4d4f, type: 2}
+  extremeAggression: {fileID: 11400000, guid: f3b2b8dd2a8857f48ae9ff919a1467af, type: 2}
+  brain: {fileID: 8075828841313147454}
+  movement: {fileID: 8481307706142290260}
+  hearing: {fileID: 8394074422208106033}
+  teleport: {fileID: 6448776269113922153}
+  currentLevel: 0
+  currentProfile: {fileID: 0}
+  applyProfileOnStart: 1
+  logAggressionChanges: 1
 --- !u!1 &6448371474645098270
 GameObject:
   m_ObjectHideFlags: 0
