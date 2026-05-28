@@ -20,10 +20,27 @@ public class ShadowEnemyMovementController : MonoBehaviour
     private float speedTimer;
     private float pauseTimer;
     private bool isPaused;
+    private float baseMinSpeed;
+    private float baseMaxSpeed;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        baseMinSpeed = minSpeed;
+        baseMaxSpeed = maxSpeed;
+    }
+
+    /// <summary>
+    /// Applies runtime aggression tuning without changing the serialized base values.
+    /// </summary>
+    public void ApplyAggressionSpeedMultiplier(float multiplier)
+    {
+        multiplier = Mathf.Max(0.1f, multiplier);
+        minSpeed = baseMinSpeed * multiplier;
+        maxSpeed = baseMaxSpeed * multiplier;
+
+        if (agent != null)
+            agent.speed = Mathf.Clamp(agent.speed, minSpeed, maxSpeed);
     }
 
     public void TickVariation(EnemyState state)

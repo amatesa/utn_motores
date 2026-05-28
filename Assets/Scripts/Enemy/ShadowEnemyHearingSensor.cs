@@ -6,8 +6,17 @@ using UnityEngine;
 public class ShadowEnemyHearingSensor : MonoBehaviour
 {
     [SerializeField] private bool debugEnabled = true;
+    [SerializeField] private float hearingSensitivityMultiplier = 1f;
 
     private float lastDebugSoundTime = -1f;
+
+    /// <summary>
+    /// Applies runtime hearing sensitivity tuning from enemy aggression.
+    /// </summary>
+    public void ApplyHearingSensitivity(float multiplier)
+    {
+        hearingSensitivityMultiplier = Mathf.Max(0.1f, multiplier);
+    }
 
     public void ClearStaleContextOnStart()
     {
@@ -51,6 +60,6 @@ public class ShadowEnemyHearingSensor : MonoBehaviour
 
     private float GetHearingRange(float intensity)
     {
-        return Mathf.Sqrt(intensity) * 10f;
+        return Mathf.Sqrt(intensity) * 10f * hearingSensitivityMultiplier;
     }
 }
