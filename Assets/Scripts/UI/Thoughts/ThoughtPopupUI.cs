@@ -1,12 +1,8 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// Canvas presentation component for atmospheric thought messages.
-/// Owns only text visibility and fade animation; queueing and spam control live
-/// in <see cref="ThoughtPopupSystem"/>.
-/// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(CanvasGroup))]
 public class ThoughtPopupUI : MonoBehaviour
@@ -21,9 +17,6 @@ public class ThoughtPopupUI : MonoBehaviour
 
     private Coroutine displayRoutine;
 
-    /// <summary>
-    /// True while the UI is actively fading or showing a message.
-    /// </summary>
     public bool IsDisplaying => displayRoutine != null;
 
     private void Awake()
@@ -34,19 +27,22 @@ public class ThoughtPopupUI : MonoBehaviour
         HideImmediate();
     }
 
-    /// <summary>
-    /// Displays a message with fade in, hold, and fade out.
-    /// </summary>
-    public Coroutine Show(string message, float duration, System.Action onComplete)
+    public Coroutine Show(
+        string message,
+        float duration,
+        ThoughtType type,
+        Action onComplete
+    )
     {
         StopDisplay();
-        displayRoutine = StartCoroutine(ShowRoutine(message, duration, onComplete));
+
+        displayRoutine = StartCoroutine(
+            ShowRoutine(message, duration, type, onComplete)
+        );
+
         return displayRoutine;
     }
 
-    /// <summary>
-    /// Stops the current animation and hides the popup.
-    /// </summary>
     public void StopDisplay()
     {
         if (displayRoutine != null)
@@ -58,17 +54,29 @@ public class ThoughtPopupUI : MonoBehaviour
         HideImmediate();
     }
 
-    private IEnumerator ShowRoutine(string message, float duration, System.Action onComplete)
+    private IEnumerator ShowRoutine(
+        string message,
+        float duration,
+        ThoughtType type,
+        Action onComplete
+    )
     {
         if (messageText != null)
+        {
             messageText.text = message;
+            messageText.color = GetThoughtColor(type);
+        }
 
         yield return Fade(0f, 1f, fadeInDuration);
+
         yield return new WaitForSecondsRealtime(duration);
+
         yield return Fade(1f, 0f, fadeOutDuration);
 
         HideImmediate();
+
         displayRoutine = null;
+
         onComplete?.Invoke();
     }
 
@@ -88,8 +96,11 @@ public class ThoughtPopupUI : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
+
             float t = Mathf.Clamp01(elapsed / duration);
+
             canvasGroup.alpha = Mathf.Lerp(from, to, t);
+
             yield return null;
         }
 
@@ -104,6 +115,23 @@ public class ThoughtPopupUI : MonoBehaviour
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
+    }
 
+    private Color GetThoughtColor(ThoughtType type)
+    {
+        switch (type)
+        {
+            case ThoughtType.Danger:
+                return new Color(1f, 0.45f, 0.45f);
+
+            case ThoughtType.Objective:
+                return new Color(1f, 0.85f, 0.4f);
+
+            case ThoughtType.System:
+                return new Color(0.9f, 0.9f, 0.9f);
+
+            default:
+                return new Color(0.75f, 0.75f, 0.75f);
+        }
     }
 }

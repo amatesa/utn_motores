@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 105ead81fe494e44783e6233299c3e20, type: 3}
-  m_Name: Key_01
+  m_Name: Key_01_Bedroom_First_Floor
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: key_room_101
   itemName: Llave Dormitorios

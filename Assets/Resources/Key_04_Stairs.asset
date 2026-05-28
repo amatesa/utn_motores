@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 105ead81fe494e44783e6233299c3e20, type: 3}
-  m_Name: Key_02
+  m_Name: Key_04_Stairs
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: key_basement
+  itemID: key_room_103
   itemName: Llave Vieja
   icon: {fileID: 632792828, guid: 37c2a79d5ada5014b8cd1bfbc95d7bb3, type: 3}

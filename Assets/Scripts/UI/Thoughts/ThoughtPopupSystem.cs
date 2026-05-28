@@ -3,25 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Central runtime service for atmospheric horror thought popups.
-/// Future gameplay systems should call this service instead of talking directly
-/// to UI objects, keeping ghost, lantern, enemy, and narrative systems decoupled.
-/// </summary>
 [DisallowMultipleComponent]
 public class ThoughtPopupSystem : MonoBehaviour
 {
     public static ThoughtPopupSystem Instance { get; private set; }
 
-    /// <summary>
-    /// Raised when a thought is accepted into the popup pipeline.
-    /// Useful for future analytics, UI effects, or optional audio hooks.
-    /// </summary>
     public event Action<ThoughtMessageData> OnThoughtQueued;
-
-    /// <summary>
-    /// Raised when a thought starts displaying on screen.
-    /// </summary>
     public event Action<ThoughtMessageData> OnThoughtDisplayed;
 
     [Header("References")]
@@ -32,6 +19,7 @@ public class ThoughtPopupSystem : MonoBehaviour
     [SerializeField] private float messageCooldown = 1.25f;
     [SerializeField] private int defaultPriority = 0;
     [SerializeField] private bool defaultCanInterrupt = false;
+    [SerializeField] private ThoughtType defaultThoughtType = ThoughtType.Flavor;
 
     [Header("Spam Protection")]
     [SerializeField] private int maxQueuedMessages = 5;
@@ -41,8 +29,10 @@ public class ThoughtPopupSystem : MonoBehaviour
     [SerializeField] private bool logDebugMessages = false;
     [SerializeField] private bool enableKeyboardDebugTrigger = false;
     [SerializeField] private Key debugKey = Key.F8;
+
     [TextArea]
-    [SerializeField] private string debugMessage = "Something is watching me.";
+    [SerializeField]
+    private string debugMessage = "Siento que algo me observa...";
 
     private readonly Queue<ThoughtMessageData> queuedMessages = new();
     private readonly Dictionary<string, float> recentMessages = new();
@@ -59,6 +49,7 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         Instance = this;
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -72,30 +63,39 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         CleanRecentMessages();
+
         TryDisplayNextQueuedMessage();
     }
 
-    /// <summary>
-    /// Queues a thought popup using the default duration and priority.
-    /// </summary>
     public void ShowThought(string message)
     {
-        ShowThought(message, defaultDuration);
+        ShowThought(
+            message,
+            defaultDuration,
+            defaultPriority,
+            defaultCanInterrupt,
+            defaultThoughtType
+        );
     }
 
-    /// <summary>
-    /// Queues a thought popup using a custom duration and default priority.
-    /// </summary>
     public void ShowThought(string message, float duration)
     {
-        ShowThought(message, duration, defaultPriority, defaultCanInterrupt);
+        ShowThought(
+            message,
+            duration,
+            defaultPriority,
+            defaultCanInterrupt,
+            defaultThoughtType
+        );
     }
 
-    /// <summary>
-    /// Queues a thought popup with explicit priority and interruption behavior.
-    /// Higher priority messages may interrupt lower priority active messages.
-    /// </summary>
-    public void ShowThought(string message, float duration, int priority, bool canInterrupt)
+    public void ShowThought(
+        string message,
+        float duration,
+        int priority,
+        bool canInterrupt,
+        ThoughtType type
+    )
     {
         if (string.IsNullOrWhiteSpace(message))
             return;
@@ -110,7 +110,8 @@ public class ThoughtPopupSystem : MonoBehaviour
             message,
             Mathf.Max(0.1f, duration),
             priority,
-            canInterrupt
+            canInterrupt,
+            type
         );
 
         recentMessages[message] = Time.unscaledTime;
@@ -118,7 +119,9 @@ public class ThoughtPopupSystem : MonoBehaviour
         if (CanInterruptActiveMessage(data))
         {
             OnThoughtQueued?.Invoke(data);
+
             InterruptWith(data);
+
             return;
         }
 
@@ -129,17 +132,16 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         queuedMessages.Enqueue(data);
+
         OnThoughtQueued?.Invoke(data);
+
         Log($"Queued thought: {message}");
     }
 
-    /// <summary>
-    /// Clears queued thoughts and hides the active popup.
-    /// Useful for future scene transitions or hard gameplay state changes.
-    /// </summary>
     public void Clear()
     {
         queuedMessages.Clear();
+
         activeMessage = null;
 
         if (popupUI != null)
@@ -162,8 +164,13 @@ public class ThoughtPopupSystem : MonoBehaviour
 
     private bool CanInterruptActiveMessage(ThoughtMessageData data)
     {
-        if (!data.CanInterrupt || popupUI == null || !popupUI.IsDisplaying || !activeMessage.HasValue)
+        if (!data.CanInterrupt ||
+            popupUI == null ||
+            !popupUI.IsDisplaying ||
+            !activeMessage.HasValue)
+        {
             return false;
+        }
 
         return data.Priority > activeMessage.Value.Priority;
     }
@@ -185,14 +192,24 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         activeMessage = data;
-        nextMessageTime = Time.unscaledTime + data.Duration + messageCooldown;
 
-        popupUI.Show(data.Message, data.Duration, () =>
-        {
-            activeMessage = null;
-        });
+        nextMessageTime =
+            Time.unscaledTime +
+            data.Duration +
+            messageCooldown;
+
+        popupUI.Show(
+            data.Message,
+            data.Duration,
+            data.Type,
+            () =>
+            {
+                activeMessage = null;
+            }
+        );
 
         OnThoughtDisplayed?.Invoke(data);
+
         Log($"Displaying thought: {data.Message}");
     }
 
@@ -214,6 +231,7 @@ public class ThoughtPopupSystem : MonoBehaviour
             if (Time.unscaledTime - pair.Value >= duplicateCooldown)
             {
                 expired ??= new List<string>();
+
                 expired.Add(pair.Key);
             }
         }
@@ -227,22 +245,52 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
     }
 
-    [ContextMenu("Test Thought/Footsteps Upstairs")]
+    [ContextMenu("Test Thought/Pasos")]
     private void TestFootstepsThought()
     {
-        ShowThought("I hear footsteps upstairs...");
+        ShowThought(
+            "Escucho pasos en el piso de arriba...",
+            4f,
+            0,
+            false,
+            ThoughtType.Flavor
+        );
     }
 
-    [ContextMenu("Test Thought/Watching")]
+    [ContextMenu("Test Thought/Peligro")]
     private void TestWatchingThought()
     {
-        ShowThought("Something is watching me.", defaultDuration, 1, true);
+        ShowThought(
+            "Siento que algo me observa...",
+            4f,
+            5,
+            true,
+            ThoughtType.Danger
+        );
     }
 
-    [ContextMenu("Test Thought/No Candles")]
+    [ContextMenu("Test Thought/Sin Velas")]
     private void TestNoCandlesThought()
     {
-        ShowThought("I don't have any candles left.", defaultDuration, 2, true);
+        ShowThought(
+            "No me quedan velas...",
+            4f,
+            5,
+            true,
+            ThoughtType.Danger
+        );
+    }
+
+    [ContextMenu("Test Thought/Objetivo")]
+    private void TestObjectiveThought()
+    {
+        ShowThought(
+            "Necesito encontrar una llave.",
+            4f,
+            2,
+            false,
+            ThoughtType.Objective
+        );
     }
 
     private void Log(string message)

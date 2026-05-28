@@ -3,23 +3,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using StarterAssets;
 
-/// <summary>
-/// Runtime coordinator for opening, paging through, and closing readable
-/// environmental documents.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class ReadableDocumentViewer : MonoBehaviour
 {
     public static ReadableDocumentViewer Instance { get; private set; }
 
-    /// <summary>
-    /// Raised after a document opens.
-    /// </summary>
+
     public event Action<ReadableDocumentData> OnDocumentOpened;
 
-    /// <summary>
-    /// Raised after a document closes.
-    /// </summary>
     public event Action<ReadableDocumentData> OnDocumentClosed;
 
     [Header("References")]
@@ -45,9 +37,6 @@ public class ReadableDocumentViewer : MonoBehaviour
     private int currentPageIndex;
     private bool isOpen;
 
-    /// <summary>
-    /// True while a document is currently open.
-    /// </summary>
     public bool IsOpen => isOpen;
 
     private void Awake()
@@ -95,10 +84,7 @@ public class ReadableDocumentViewer : MonoBehaviour
             PreviousPage();
     }
 
-    /// <summary>
-    /// Opens a readable document. Returns false if another document is already open
-    /// or the UI is not configured.
-    /// </summary>
+
     public bool OpenDocument(ReadableDocumentData document, ReadableDocument worldDocument = null)
     {
         if (isOpen || document == null || documentUI == null)
@@ -121,9 +107,7 @@ public class ReadableDocumentViewer : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Closes the active document and restores player control.
-    /// </summary>
+
     public void CloseDocument()
     {
         if (!isOpen)
@@ -150,9 +134,7 @@ public class ReadableDocumentViewer : MonoBehaviour
         Log($"Closed document: {closedDocument?.Title}");
     }
 
-    /// <summary>
-    /// Advances to the next page if available.
-    /// </summary>
+
     public void NextPage()
     {
         if (!isOpen || currentDocument == null)
@@ -165,9 +147,7 @@ public class ReadableDocumentViewer : MonoBehaviour
         documentUI.Render(currentDocument, currentPageIndex);
     }
 
-    /// <summary>
-    /// Returns to the previous page if available.
-    /// </summary>
+
     public void PreviousPage()
     {
         if (!isOpen || currentDocument == null)
@@ -242,7 +222,8 @@ public class ReadableDocumentViewer : MonoBehaviour
             document.ThoughtMessage,
             document.ThoughtDuration,
             document.ThoughtPriority,
-            document.ThoughtCanInterrupt
+            document.ThoughtCanInterrupt,
+            ThoughtType.Objective
         );
     }
 

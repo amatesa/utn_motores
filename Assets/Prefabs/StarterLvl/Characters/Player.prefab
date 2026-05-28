@@ -5278,7 +5278,7 @@ Transform:
   m_GameObject: {fileID: 1991999891939364106}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0015271443, y: 0.0000000314626, z: 1.2149233e-10, w: 0.99999887}
-  m_LocalPosition: {x: -0, y: 1.577, z: -0}
+  m_LocalPosition: {x: -0, y: 1.6, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5297,8 +5297,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
-    Enabled: 0
-    m_Value: 0
+    Enabled: 1
+    m_Value: 20
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -16708,6 +16708,7 @@ GameObject:
   - component: {fileID: 7239482314899134968}
   - component: {fileID: 5904700631076312834}
   - component: {fileID: 6813859310625940481}
+  - component: {fileID: 5902906777230943477}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -16864,6 +16865,7 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
+  crouch: 0
   stealth: 0
   interact: 0
   switchCamera: 0
@@ -17236,6 +17238,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 237735903ee314042bd3ac08ffc02e06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHideState
+--- !u!114 &5902906777230943477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7086920295003483686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b503049e53f98f64fb376f7926a046ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCrouchController
+  characterController: {fileID: 128812594336729851}
+  cameraRoot: {fileID: 6991030300640187371}
+  crouchKey: 17
+  standingHeight: 2
+  standingCameraY: 1.6
+  crouchingHeight: 0.8
+  crouchingCameraY: 0.8
+  transitionSpeed: 8
 --- !u!1 &7238305506385377882
 GameObject:
   m_ObjectHideFlags: 0
@@ -18014,9 +18036,9 @@ MonoBehaviour:
   dangerProtectionEfficiency: 0.75
   finalEscapeProtectionEfficiency: 0.55
   showThoughts: 1
-  noCandlesThought: I don't have any candles left.
-  fadingThought: The lantern is fading...
-  unstableThought: The flame is unstable.
+  noCandlesThought: No me quedan velas...
+  fadingThought: "La llama se est\xE1 apagando..."
+  unstableThought: "La llama no se mantendr\xE1 por mucho tiempo..."
   logDebugMessages: 0
   currentState: 1
   currentFuelSeconds: 60
@@ -18057,7 +18079,7 @@ MonoBehaviour:
   enemyTag: Enemy
   triggerCollider: {fileID: 173926923581257687}
   isActive: 0
-  protectionEfficiency: 100
+  protectionEfficiency: 1
   logDebugMessages: 0
 --- !u!1 &9219247303194059165
 GameObject:
