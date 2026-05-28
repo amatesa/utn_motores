@@ -15,8 +15,14 @@ public class InteractorTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (currentInteractable == null || input == null)
+        if (input == null)
             return;
+
+        if (currentInteractable == null)
+        {
+            interactText.SetActive(false);
+            return;
+        }
 
         // Detectar input correctamente
         if (input.interact)
@@ -24,6 +30,12 @@ public class InteractorTrigger : MonoBehaviour
             Debug.Log("[INTERACTOR] Interacting with: " + currentInteractable.name);
 
             currentInteractable.Interact(transform.root.gameObject);
+
+            if (currentInteractable == null || currentInteractable.gameObject == null)
+            {
+                currentInteractable = null;
+                interactText.SetActive(false);
+            }
 
             // IMPORTANTE: resetear DESPUÉS de usar
             input.interact = false;

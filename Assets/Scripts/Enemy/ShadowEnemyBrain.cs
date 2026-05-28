@@ -24,6 +24,7 @@ public class ShadowEnemyBrain : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform target;
     [SerializeField] private EnemyPerception perception;
+    [SerializeField] private EnemyLanternResponder lanternResponder;
 
     [Header("State Timers")]
     [SerializeField] private float investigateDuration = 4f;
@@ -47,6 +48,9 @@ public class ShadowEnemyBrain : MonoBehaviour
     private float hesitationTimer;
     private bool isHesitating;
     private Vector3 lastKnownPosition;
+    private float baseInvestigateDuration;
+    private float baseLoseSightTime;
+    private float baseHesitationTime;
 
     private void Awake()
     {
@@ -58,6 +62,23 @@ public class ShadowEnemyBrain : MonoBehaviour
 
         if (perception == null)
             perception = GetComponent<EnemyPerception>();
+
+        if (lanternResponder == null)
+            lanternResponder = GetComponent<EnemyLanternResponder>();
+
+        baseInvestigateDuration = investigateDuration;
+        baseLoseSightTime = loseSightTime;
+        baseHesitationTime = hesitationTime;
+    }
+
+    /// <summary>
+    /// Applies runtime aggression timing without embedding phase logic in the FSM.
+    /// </summary>
+    public void ApplyAggressionTiming(float chasePersistence, float searchDuration, float hesitationDuration)
+    {
+        loseSightTime = baseLoseSightTime * Mathf.Max(0.1f, chasePersistence);
+        investigateDuration = baseInvestigateDuration * Mathf.Max(0.1f, searchDuration);
+        hesitationTime = baseHesitationTime * Mathf.Max(0.1f, hesitationDuration);
     }
 
     private void Start()
@@ -76,7 +97,17 @@ public class ShadowEnemyBrain : MonoBehaviour
             SwitchToRetreat();
         }
 
-        if (!playerSafe && perception != null && perception.CanSeePlayer() && CurrentState != EnemyState.Chase)
+        bool lanternRepelling =
+    lanternResponder != null &&
+    lanternResponder.IsRepelling();
+
+        if (
+            !playerSafe &&
+            !lanternRepelling &&
+            perception != null &&
+            perception.CanSeePlayer() &&
+            CurrentState != EnemyState.Chase
+        )
         {
             SwitchToChase();
         }
@@ -212,6 +243,13 @@ public class ShadowEnemyBrain : MonoBehaviour
         Log("-> RETREAT (hesitating)");
     }
 
+    public void RequestLanternRetreat()
+    {
+        if (CurrentState == EnemyState.Retreat)
+            return;
+
+        SwitchToRetreat();
+    }
     public bool IsThreatActive() => CurrentState == EnemyState.Chase;
 
     private void Log(string msg)

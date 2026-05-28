@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e725069a3968406bb6f479dbcfefab8a, type: 3}
+  m_Name: ReadableDocument
+  m_EditorClassIdentifier: Assembly-CSharp::ReadableDocumentData
+  title: 
+  bodyText: 
+  image: {fileID: 0}
+  pages: []
+  showThoughtAfterReading: 0
+  thoughtMessage: 
+  thoughtDuration: 3
+  thoughtPriority: 0
+  thoughtCanInterrupt: 0
+  requestSoundCue: 0
+  soundCueId: 
