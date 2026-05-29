@@ -35,7 +35,7 @@ public class SlidingDoor : MonoBehaviour
             Debug.LogWarning($"{name}: Door ID está vacío.");
         }
 
-        isOpen = PlayerPrefs.GetInt(GetSaveKey(), 0) == 1;
+        isOpen = PlayerPrefs.GetInt(GetSaveKey(), 0) == 0;
 
         if (isOpen)
         {
