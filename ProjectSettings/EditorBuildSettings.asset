@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Level_1.unity
     guid: 03d4122f9b0b9334b99f5373419007b4
   - enabled: 1
-    path: Assets/Scenes/Level_2.unity
+    path: Assets/Scenes/Backup/Level_2 Backup.unity
     guid: 9ba8ebea2ecaf244a8b100e3fc509cfc
   - enabled: 1
     path: Assets/Scenes/VictoryScene.unity
