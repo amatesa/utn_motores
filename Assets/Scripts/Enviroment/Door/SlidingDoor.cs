@@ -9,6 +9,14 @@ public class SlidingDoor : MonoBehaviour
     [SerializeField] private float openDistance = 2f;
     [SerializeField] private float openSpeed = 2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip[] openSounds;
+    [SerializeField] private AudioClip[] lockedSounds;
+    [SerializeField] private float volume = 1f;
+    [SerializeField] private bool randomPitch = false;
+    [SerializeField] private Vector2 pitchRange = new Vector2(0.95f, 1.05f);
+
     [Header("Persistence")]
     [SerializeField] private string doorID;
 
@@ -16,6 +24,8 @@ public class SlidingDoor : MonoBehaviour
 
     private bool isOpen;
     private bool isMoving;
+    private int lastOpenSoundIndex = -1;
+    private int lastLockedSoundIndex = -1;
 
     private Vector3 closedPosition;
     private Vector3 openedPosition;
@@ -52,7 +62,10 @@ public class SlidingDoor : MonoBehaviour
             return;
 
         if (doorLock != null && !doorLock.TryUnlock(instigator))
+        {
+            PlayLockedSound();
             return;
+        }
 
         OpenDoor();
     }
@@ -78,10 +91,94 @@ public class SlidingDoor : MonoBehaviour
         isOpen = true;
         isMoving = true;
 
+        PlayOpenSound();
+
         PlayerPrefs.SetInt(GetSaveKey(), 1);
         PlayerPrefs.Save();
 
         StartCoroutine(OpenRoutine());
+    }
+
+    private void PlayOpenSound()
+    {
+        PlayClip(GetRandomClip(openSounds, ref lastOpenSoundIndex));
+    }
+
+    private void PlayLockedSound()
+    {
+        PlayClip(GetRandomClip(lockedSounds, ref lastLockedSoundIndex));
+    }
+
+    private void PlayClip(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+
+        if (audioSource != null)
+        {
+            float originalPitch = audioSource.pitch;
+            if (randomPitch)
+                audioSource.pitch = GetPlaybackPitch();
+
+            audioSource.PlayOneShot(clip, volume);
+            audioSource.pitch = originalPitch;
+            return;
+        }
+
+        PlayClipAtPoint(clip);
+    }
+
+    private float GetPlaybackPitch()
+    {
+        if (!randomPitch)
+            return 1f;
+
+        float min = Mathf.Min(pitchRange.x, pitchRange.y);
+        float max = Mathf.Max(pitchRange.x, pitchRange.y);
+        return Random.Range(min, max);
+    }
+
+    private void PlayClipAtPoint(AudioClip clip)
+    {
+        if (!randomPitch)
+        {
+            AudioSource.PlayClipAtPoint(clip, transform.position, volume);
+            return;
+        }
+
+        GameObject audioObject = new GameObject($"{name}_OneShotAudio");
+        audioObject.transform.position = transform.position;
+
+        AudioSource source = audioObject.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = volume;
+        source.pitch = GetPlaybackPitch();
+        source.Play();
+
+        Destroy(audioObject, clip.length / Mathf.Max(0.01f, Mathf.Abs(source.pitch)));
+    }
+
+    private AudioClip GetRandomClip(AudioClip[] clips, ref int lastIndex)
+    {
+        if (clips == null || clips.Length == 0)
+            return null;
+
+        int index;
+        if (clips.Length == 1)
+        {
+            index = 0;
+        }
+        else
+        {
+            do
+            {
+                index = Random.Range(0, clips.Length);
+            }
+            while (index == lastIndex);
+        }
+
+        lastIndex = index;
+        return clips[index];
     }
 
     private IEnumerator OpenRoutine()

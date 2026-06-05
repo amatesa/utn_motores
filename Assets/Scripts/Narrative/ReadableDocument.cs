@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// World component placed on a note, letter, record, or report.
-/// The document remains in the scene and can be read repeatedly after a short
-/// cooldown; it is not collected or added to inventory.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class ReadableDocument : MonoBehaviour
 {
@@ -20,15 +16,10 @@ public class ReadableDocument : MonoBehaviour
 
     private float nextAllowedOpenTime;
 
-    /// <summary>
-    /// Document data assigned to this world object.
-    /// </summary>
+
     public ReadableDocumentData DocumentData => documentData;
 
-    /// <summary>
-    /// Opens this document through the configured viewer.
-    /// Intended to be called from an Interactable UnityEvent.
-    /// </summary>
+
     public void OpenDocument()
     {
         if (Time.unscaledTime < nextAllowedOpenTime)
@@ -55,9 +46,7 @@ public class ReadableDocument : MonoBehaviour
             Log($"Opened document: {documentData.Title}");
     }
 
-    /// <summary>
-    /// Called by the viewer when this document closes.
-    /// </summary>
+
     public void NotifyClosed()
     {
         nextAllowedOpenTime = Time.unscaledTime + reopenCooldown;

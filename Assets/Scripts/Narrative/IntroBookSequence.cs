@@ -5,21 +5,14 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using StarterAssets;
 
-/// <summary>
-/// Dedicated opening book sequence shown after the intro cinematic and before
-/// gameplay begins. This is separate from world readable documents.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class IntroBookSequence : MonoBehaviour
 {
-    /// <summary>
-    /// Raised when the intro book opens.
-    /// </summary>
+
     public event Action OnSequenceOpened;
 
-    /// <summary>
-    /// Raised when the intro book closes.
-    /// </summary>
+
     public event Action OnSequenceClosed;
 
     [Header("References")]
@@ -45,6 +38,16 @@ public class IntroBookSequence : MonoBehaviour
     [SerializeField] private bool openOnStart = false;
     [SerializeField] private UnityEvent onSequenceClosed;
 
+    [Header("Narration")]
+    [SerializeField] private AudioSource narrationSource;
+    [SerializeField] private AudioClip[] pageNarrations;
+    [SerializeField] private float narrationVolume = 1f;
+
+    [Header("Page Audio")]
+    [SerializeField] private AudioSource pageAudioSource;
+    [SerializeField] private AudioClip pageTurnClip;
+    [SerializeField] private float pageTurnVolume = 1f;
+
     [Header("Debug")]
     [SerializeField] private bool logDebugMessages = false;
 
@@ -52,14 +55,10 @@ public class IntroBookSequence : MonoBehaviour
     private bool isOpen;
     private static bool hasAlreadyPlayed;
 
-    /// <summary>
-    /// True while the intro book is currently open.
-    /// </summary>
+
     public bool IsOpen => isOpen;
 
-    /// <summary>
-    /// Current page index, zero-based.
-    /// </summary>
+
     public int CurrentPageIndex => currentPageIndex;
 
     private void OnEnable()
@@ -104,10 +103,7 @@ public class IntroBookSequence : MonoBehaviour
             PreviousPage();
     }
 
-    /// <summary>
-    /// Opens the intro book at the first page and blocks gameplay input.
-    /// Intended to be called after the opening cinematic finishes.
-    /// </summary>
+
     public void OpenSequence()
     {
         if (isOpen || bookUI == null || pages == null || pages.Count == 0)
@@ -120,21 +116,22 @@ public class IntroBookSequence : MonoBehaviour
         SetCursorForSequence(true);
 
         RenderCurrentPage();
+        PlayNarrationForCurrentPage();
         bookUI.Show();
 
         OnSequenceOpened?.Invoke();
         Log("Intro book opened.");
     }
 
-    /// <summary>
-    /// Closes the intro book, restores gameplay input, and invokes the start-game hook.
-    /// </summary>
+
     public void CloseSequence()
     {
         if (!isOpen)
             return;
 
         isOpen = false;
+
+        StopNarration();
 
         if (bookUI != null)
             bookUI.Hide();
@@ -150,9 +147,7 @@ public class IntroBookSequence : MonoBehaviour
         Log("Intro book closed.");
     }
 
-    /// <summary>
-    /// Advances to the next page when available.
-    /// </summary>
+
     public void NextPage()
     {
         if (!isOpen || pages == null || currentPageIndex >= pages.Count - 1)
@@ -160,11 +155,11 @@ public class IntroBookSequence : MonoBehaviour
 
         currentPageIndex++;
         RenderCurrentPage();
+        PlayPageTurn();
+        PlayNarrationForCurrentPage();
     }
 
-    /// <summary>
-    /// Returns to the previous page when available.
-    /// </summary>
+
     public void PreviousPage()
     {
         if (!isOpen || currentPageIndex <= 0)
@@ -172,6 +167,8 @@ public class IntroBookSequence : MonoBehaviour
 
         currentPageIndex--;
         RenderCurrentPage();
+        PlayPageTurn();
+        PlayNarrationForCurrentPage();
     }
 
     private void RenderCurrentPage()
@@ -181,6 +178,39 @@ public class IntroBookSequence : MonoBehaviour
 
         currentPageIndex = Mathf.Clamp(currentPageIndex, 0, pages.Count - 1);
         bookUI.Render(pages[currentPageIndex], currentPageIndex, pages.Count);
+    }
+
+    private void PlayPageTurn()
+    {
+        if (pageAudioSource == null || pageTurnClip == null)
+            return;
+
+        pageAudioSource.PlayOneShot(pageTurnClip, pageTurnVolume);
+    }
+
+    private void PlayNarrationForCurrentPage()
+    {
+        StopNarration();
+
+        if (narrationSource == null || pageNarrations == null)
+            return;
+
+        if (currentPageIndex < 0 || currentPageIndex >= pageNarrations.Length)
+            return;
+
+        AudioClip narrationClip = pageNarrations[currentPageIndex];
+        if (narrationClip == null)
+            return;
+
+        narrationSource.clip = narrationClip;
+        narrationSource.volume = narrationVolume;
+        narrationSource.Play();
+    }
+
+    private void StopNarration()
+    {
+        if (narrationSource != null && narrationSource.isPlaying)
+            narrationSource.Stop();
     }
 
     private void SetPlayerControlEnabled(bool enabled)

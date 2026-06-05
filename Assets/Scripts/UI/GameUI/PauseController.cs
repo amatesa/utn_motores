@@ -14,9 +14,11 @@ public class PauseController : MonoBehaviour
     [SerializeField] private OptionsController optionsController;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource pauseMusic; 
+    [SerializeField] private AudioSource pauseMusic;
 
     private bool isPaused = false;
+
+    public bool IsPaused => isPaused;
 
     private void OnEnable()
     {
@@ -52,50 +54,61 @@ public class PauseController : MonoBehaviour
 
     private void PauseGame()
     {
+        if (isPaused)
+            return;
+
         isPaused = true;
+  
+
+        // Aplicar snapshot ANTES de congelar
+        if (AudioSnapshotController.Instance != null)
+            AudioSnapshotController.Instance.SetPause();
+
+        if (pausePanel != null)
+            pausePanel.SetActive(true);
+
+        if (overlay != null)
+            overlay.SetActive(true);
+
+        if (pauseMusic != null)
+        {
+            pauseMusic.loop = true;
+
+            if (!pauseMusic.isPlaying)
+                pauseMusic.Play();
+        }
 
         Time.timeScale = 0f;
 
-        pausePanel.SetActive(true);
-        overlay.SetActive(true);
-
-        // AUDIO GLOBAL PAUSE
-        AudioListener.pause = true;
-
-        // EXCEPCIÓN: música de pausa
-        if (pauseMusic != null)
-        {
-            pauseMusic.ignoreListenerPause = true;
-            pauseMusic.loop = true;
-            pauseMusic.Play();
-        }
-
-        // CURSOR
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     private void ResumeGame()
     {
+        if (!isPaused)
+            return;
+
         isPaused = false;
 
         Time.timeScale = 1f;
 
-        pausePanel.SetActive(false);
-        overlay.SetActive(false);
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
+        if (overlay != null)
+            overlay.SetActive(false);
 
         if (optionsController != null)
             optionsController.CloseOptions();
 
-        // AUDIO RESUME
-        AudioListener.pause = false;
-
         if (pauseMusic != null)
-        {
             pauseMusic.Stop();
-        }
 
-        // CURSOR
+        // Forzar salida de pausa
+        if (AudioSnapshotController.Instance != null)
+            AudioSnapshotController.Instance.SetExploration();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -111,13 +124,17 @@ public class PauseController : MonoBehaviour
 
     public void OnOptionsPressed()
     {
-        optionsController.OpenOptions();
+        if (optionsController != null)
+            optionsController.OpenOptions();
     }
 
     public void OnQuitPressed()
     {
         Time.timeScale = 1f;
-        AudioListener.pause = false;
+
+        if (pauseMusic != null)
+            pauseMusic.Stop();
+
         GameManager.Instance.LoadMainMenu();
     }
 }

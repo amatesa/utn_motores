@@ -4,6 +4,10 @@ public class CollectibleItem : MonoBehaviour
 {
     [SerializeField] private ItemData itemData;
 
+    [Header("Pickup Audio")]
+    [SerializeField] private AudioClip pickupAudioClip;
+    [SerializeField] private AudioSource pickupAudioSource;
+
     private void Start()
     {
         if (itemData == null) return;
@@ -35,6 +39,8 @@ public class CollectibleItem : MonoBehaviour
 
         Debug.Log("[ITEM] Collected: " + itemData.itemName);
 
+        PlayPickupAudio();
+
         // =========================
         // FIX UI DIRECTO
         // =========================
@@ -63,6 +69,20 @@ public class CollectibleItem : MonoBehaviour
         // DESTROY
         // =========================
         Destroy(gameObject);
+    }
+
+    private void PlayPickupAudio()
+    {
+        if (pickupAudioClip == null)
+            return;
+
+        if (pickupAudioSource != null)
+        {
+            pickupAudioSource.PlayOneShot(pickupAudioClip);
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(pickupAudioClip, transform.position);
     }
 
     private void SendFakeExit(InteractorTrigger interactor)

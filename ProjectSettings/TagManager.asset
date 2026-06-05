@@ -14,6 +14,7 @@ TagManager:
   - Carpet
   - Metal
   - Tiles
+  - ExitDoor
   layers:
   - Default
   - TransparentFX

@@ -3,10 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Canvas presenter for the intro book sequence.
-/// Owns page rendering and fade transitions only.
-/// </summary>
+
 [DisallowMultipleComponent]
 [RequireComponent(typeof(CanvasGroup))]
 public class IntroBookUI : MonoBehaviour
@@ -38,9 +35,6 @@ public class IntroBookUI : MonoBehaviour
         HideImmediate();
     }
 
-    /// <summary>
-    /// Renders the current intro book page and navigation state.
-    /// </summary>
     public void Render(IntroBookPageData page, int pageIndex, int pageCount)
     {
         if (page == null)
@@ -76,17 +70,13 @@ public class IntroBookUI : MonoBehaviour
             closeButton.interactable = true;
     }
 
-    /// <summary>
-    /// Fades the intro book into view.
-    /// </summary>
+
     public void Show()
     {
         StartTransition(1f, fadeInDuration);
     }
 
-    /// <summary>
-    /// Fades the intro book out of view.
-    /// </summary>
+
     public void Hide()
     {
         StartTransition(0f, fadeOutDuration);
