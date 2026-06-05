@@ -166745,8 +166745,11 @@ MonoBehaviour:
   speed: 3
   player: {fileID: 171206071}
   audioSource: {fileID: 815978209}
-  openSound: {fileID: 8300000, guid: 9a19fc51330904644bdfa5b8747d39a8, type: 3}
-  closeSound: {fileID: 8300000, guid: 2f7843108949d1d4cac6972eb5a86a8f, type: 3}
+  openSounds: []
+  closeSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
 --- !u!114 &815978212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185707,6 +185710,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
   itemData: {fileID: 11400000, guid: 6657f6ba191960042b84f61a30d47ccf, type: 2}
+  pickupAudioClip: {fileID: 0}
+  pickupAudioSource: {fileID: 0}
 --- !u!114 &896509388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223611,6 +223616,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 1413727889}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 951884093}
 --- !u!114 &1115341201
 MonoBehaviour:
@@ -340750,6 +340773,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 118309363}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 2110810750}
 --- !u!114 &1680231257
 MonoBehaviour:
@@ -354096,8 +354137,12 @@ MonoBehaviour:
   openAngle: 85
   speed: 3
   audioSource: {fileID: 1744843934}
-  openSound: {fileID: 8300000, guid: 9a19fc51330904644bdfa5b8747d39a8, type: 3}
-  closeSound: {fileID: 8300000, guid: 2f7843108949d1d4cac6972eb5a86a8f, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 0
   autoCloseDelay: 10
   interactionEmitter: {fileID: 1744843933}
@@ -356519,6 +356564,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 1311765211}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 479896190}
 --- !u!114 &1761889066
 MonoBehaviour:
@@ -359603,6 +359666,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 1461818164}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 625087012}
 --- !u!114 &1778931649
 MonoBehaviour:
@@ -397408,6 +397489,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 1090991168}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 931378844}
 --- !u!114 &1989664926
 MonoBehaviour:
@@ -443675,8 +443774,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431213567216534}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 1249037095}
@@ -443697,8 +443800,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431213619517700}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 1318377909}
@@ -443719,8 +443826,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431214422925328}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 2138300585}
@@ -443741,8 +443852,12 @@ MonoBehaviour:
   openAngle: 55
   speed: 2
   audioSource: {fileID: 2402431212691531398}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 0
   autoCloseDelay: 10
   interactionEmitter: {fileID: 373614135}
@@ -443763,8 +443878,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431212477124400}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 176967561}
@@ -443785,8 +443904,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431212326723158}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 59072231}
@@ -443807,8 +443930,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431213238083479}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 0
   autoCloseDelay: 10
   interactionEmitter: {fileID: 903028518}
@@ -443829,8 +443956,12 @@ MonoBehaviour:
   openAngle: 55
   speed: 2
   audioSource: {fileID: 2402431213251549287}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 0
   autoCloseDelay: 10
   interactionEmitter: {fileID: 883267798}
@@ -443851,8 +443982,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431213211842008}
-  openSound: {fileID: 8300000, guid: 90dfd7f2403835444841b8a7d6e2fcf3, type: 3}
-  closeSound: {fileID: 0}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 927184241}
@@ -443873,8 +444008,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 2402431213090160315}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 771915282}
@@ -443895,8 +444034,12 @@ MonoBehaviour:
   openAngle: 55
   speed: 2
   audioSource: {fileID: 2402431212941394785}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 0
   autoCloseDelay: 10
   interactionEmitter: {fileID: 656409560}
@@ -449040,6 +449183,12 @@ MonoBehaviour:
   openDirection: {x: -1, y: 0, z: 0}
   openDistance: 2
   openSpeed: 2
+  audioSource: {fileID: 0}
+  openSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   doorID: key_room_104
 --- !u!114 &919132149218521174
 MonoBehaviour:
@@ -450352,6 +450501,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 8043900252990919740}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 1698030970813242688}
 --- !u!4 &1130460347716458565
 Transform:
@@ -452161,6 +452328,14 @@ MonoBehaviour:
   - {fileID: 171206068}
   - {fileID: 1905151118}
   documentImage: {fileID: 726899715750225850}
+  audioSource: {fileID: 0}
+  openClip: {fileID: 0}
+  closeClip: {fileID: 0}
+  openVolume: 1
+  closeVolume: 1
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
 --- !u!23 &1223526708182904519
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -497477,6 +497652,10 @@ MonoBehaviour:
   playerLantern: {fileID: 1010527827}
   lanternController: {fileID: 1010527826}
   initialFuelSeconds: 60
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   pickupThought: "Esto deber\xEDa ayudarme a ver en la oscuridad..."
 --- !u!82 &3062956784380193614
 AudioSource:
@@ -509037,6 +509216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
   itemData: {fileID: 11400000, guid: 4499391a6f042e74ca0df89bf57e6a29, type: 2}
+  pickupAudioClip: {fileID: 0}
+  pickupAudioSource: {fileID: 0}
 --- !u!1 &4261052189603137315
 GameObject:
   m_ObjectHideFlags: 0
@@ -518689,6 +518870,10 @@ MonoBehaviour:
   candleAmount: 1
   inventory: {fileID: 0}
   destroyAfterPickup: 1
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   showPickupThought: 1
   pickupThought: "Una vela... deber\xEDa guardarla."
   thoughtDuration: 4
@@ -523754,6 +523939,10 @@ MonoBehaviour:
   candleAmount: 1
   inventory: {fileID: 0}
   destroyAfterPickup: 1
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   showPickupThought: 1
   pickupThought: "Una vela... deber\xEDa guardarla."
   thoughtDuration: 4
@@ -523776,6 +523965,10 @@ MonoBehaviour:
   candleAmount: 1
   inventory: {fileID: 4599446128218085361}
   destroyAfterPickup: 1
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   showPickupThought: 1
   pickupThought: "Una vela... deber\xEDa guardarla."
   thoughtDuration: 4
@@ -523798,6 +523991,10 @@ MonoBehaviour:
   candleAmount: 1
   inventory: {fileID: 0}
   destroyAfterPickup: 1
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   showPickupThought: 1
   pickupThought: "Una vela... deber\xEDa guardarla."
   thoughtDuration: 4
@@ -523820,6 +524017,10 @@ MonoBehaviour:
   candleAmount: 1
   inventory: {fileID: 0}
   destroyAfterPickup: 1
+  pickupSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   showPickupThought: 1
   pickupThought: "Una vela... deber\xEDa guardarla."
   thoughtDuration: 4
@@ -529492,8 +529693,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 3451675013599861657}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 5280528985687682734}
@@ -535971,6 +536176,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideableSpot
   cameraPoint: {fileID: 4653287237515531462}
   debug: 1
+  audioSource: {fileID: 0}
+  enterHideSound: {fileID: 0}
+  exitHideSound: {fileID: 0}
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
+  enableWhispers: 0
+  whisperClips: []
+  whisperVolume: 1
+  minDelay: 3
+  maxDelay: 8
+  enableGhostVoices: 1
+  ghostVoiceClips: []
+  ghostVoiceVolume: 1
+  minVoiceDelay: 2
+  maxVoiceDelay: 8
+  maxVoicePlaysPerHide: 1
+  allowVoiceRepeatInSameHide: 0
   hideCamera: {fileID: 6140260757286481854}
 --- !u!33 &6467364765416863861
 MeshFilter:
@@ -538403,6 +538626,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
   itemData: {fileID: 11400000, guid: de5d97a0dbb3af744b327dd297248302, type: 2}
+  pickupAudioClip: {fileID: 0}
+  pickupAudioSource: {fileID: 0}
 --- !u!224 &6505581347129677491
 RectTransform:
   m_ObjectHideFlags: 0
@@ -561691,6 +561916,12 @@ MonoBehaviour:
   onSequenceClosed:
     m_PersistentCalls:
       m_Calls: []
+  narrationSource: {fileID: 0}
+  pageNarrations: []
+  narrationVolume: 1
+  pageAudioSource: {fileID: 0}
+  pageTurnClip: {fileID: 0}
+  pageTurnVolume: 1
   logDebugMessages: 0
 --- !u!23 &8419618219616378785
 MeshRenderer:
@@ -561771,7 +562002,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: d8d1875865533614cb5c938465f5edb9, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 12b6496e4c1e80e4d94b4a1f803b52b3, type: 2}
   m_BuildHeightMesh: 0
 --- !u!222 &8446552716704517578
 CanvasRenderer:
@@ -568273,8 +568504,12 @@ MonoBehaviour:
   openAngle: 75
   speed: 2
   audioSource: {fileID: 4743404103881786060}
-  openSound: {fileID: 8300000, guid: a6dc0a3c930c3f34dbc2ac447751dc65, type: 3}
-  closeSound: {fileID: 8300000, guid: c85c83d2057ca724d971b54d620a6e5b, type: 3}
+  openSounds: []
+  closeSounds: []
+  lockedSounds: []
+  volume: 1
+  randomPitch: 0
+  pitchRange: {x: 0.95, y: 1.05}
   enemyCanOpen: 1
   autoCloseDelay: 10
   interactionEmitter: {fileID: 8955929179857263081}
@@ -568552,6 +568787,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
   itemData: {fileID: 11400000, guid: d00ff3acdda6b4c4e8ec4c75ab718cbf, type: 2}
+  pickupAudioClip: {fileID: 0}
+  pickupAudioSource: {fileID: 0}
 --- !u!4 &9189286228748298379
 Transform:
   m_ObjectHideFlags: 0
