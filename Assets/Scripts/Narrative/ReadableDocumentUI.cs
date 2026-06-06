@@ -3,11 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Canvas presenter for readable documents.
-/// Owns only document UI rendering and transitions; gameplay opening/closing is
-/// coordinated by <see cref="ReadableDocumentViewer"/>.
-/// </summary>
+
 [DisallowMultipleComponent]
 [RequireComponent(typeof(CanvasGroup))]
 public class ReadableDocumentUI : MonoBehaviour
@@ -39,9 +35,7 @@ public class ReadableDocumentUI : MonoBehaviour
         HideImmediate();
     }
 
-    /// <summary>
-    /// Updates text, image, page counter, and navigation affordances.
-    /// </summary>
+
     public void Render(ReadableDocumentData document, int pageIndex)
     {
         if (document == null)
@@ -81,17 +75,13 @@ public class ReadableDocumentUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Fades the document UI into view.
-    /// </summary>
+
     public void Show()
     {
         StartTransition(1f, fadeInDuration);
     }
 
-    /// <summary>
-    /// Fades the document UI out of view.
-    /// </summary>
+
     public void Hide()
     {
         StartTransition(0f, fadeOutDuration);

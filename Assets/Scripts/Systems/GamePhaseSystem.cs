@@ -1,23 +1,14 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// Runtime pacing state service for Silent Escape.
-/// Future horror systems can subscribe to phase changes instead of polling
-/// unrelated gameplay systems or coupling directly to scene progression.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class GamePhaseSystem : MonoBehaviour
 {
-    /// <summary>
-    /// Global runtime instance for lightweight access from gameplay systems.
-    /// </summary>
+
     public static GamePhaseSystem Instance { get; private set; }
 
-    /// <summary>
-    /// Raised whenever the game phase changes.
-    /// Parameters are old phase, then new phase.
-    /// </summary>
+
     public event Action<GamePhase, GamePhase> OnPhaseChanged;
 
     [Header("Runtime State")]
@@ -26,9 +17,7 @@ public class GamePhaseSystem : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool logPhaseChanges = true;
 
-    /// <summary>
-    /// Current high-level gameplay phase.
-    /// </summary>
+
     public GamePhase CurrentPhase => currentPhase;
 
     private void Awake()
@@ -43,10 +32,7 @@ public class GamePhaseSystem : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    /// <summary>
-    /// Changes the current game phase and notifies listeners.
-    /// Repeated calls with the same phase are ignored.
-    /// </summary>
+
     public void SetPhase(GamePhase newPhase)
     {
         if (currentPhase == newPhase)
@@ -61,17 +47,12 @@ public class GamePhaseSystem : MonoBehaviour
         OnPhaseChanged?.Invoke(oldPhase, newPhase);
     }
 
-    /// <summary>
-    /// Returns true while the game is in the opening phase.
-    /// </summary>
     public bool IsIntroPhase()
     {
         return currentPhase == GamePhase.Intro;
     }
 
-    /// <summary>
-    /// Returns true once the game should apply active horror pressure.
-    /// </summary>
+
     public bool IsDangerPhase()
     {
         return currentPhase == GamePhase.KeyHunt ||
@@ -79,9 +60,7 @@ public class GamePhaseSystem : MonoBehaviour
                currentPhase == GamePhase.FinalEscape;
     }
 
-    /// <summary>
-    /// Returns true during escape-oriented phases.
-    /// </summary>
+
     public bool IsEscapePhase()
     {
         return currentPhase == GamePhase.Escape ||

@@ -2,23 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Trigger zone around the player while the lantern is active.
-/// It does not control enemy AI directly; it exposes nearby enemy pressure and
-/// protection signals so future enemy systems can choose to retreat.
-/// </summary>
+
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider))]
 public class LanternProtectionZone : MonoBehaviour
 {
-    /// <summary>
-    /// Raised when an enemy enters the lantern protection zone.
-    /// </summary>
+
     public event Action<GameObject> OnEnemyEnteredZone;
 
-    /// <summary>
-    /// Raised when an enemy exits the lantern protection zone.
-    /// </summary>
+
     public event Action<GameObject> OnEnemyExitedZone;
 
     [Header("Detection")]
@@ -48,9 +40,7 @@ public class LanternProtectionZone : MonoBehaviour
         SetActive(false);
     }
 
-    /// <summary>
-    /// Enables or disables the protection trigger.
-    /// </summary>
+
     public void SetActive(bool active)
     {
         isActive = active;
@@ -62,17 +52,13 @@ public class LanternProtectionZone : MonoBehaviour
             ClearTrackedEnemies();
     }
 
-    /// <summary>
-    /// Sets the current phase-scaled protection efficiency for future enemy reactions.
-    /// </summary>
+
     public void SetProtectionEfficiency(float efficiency)
     {
         protectionEfficiency = Mathf.Clamp01(efficiency);
     }
 
-    /// <summary>
-    /// Returns true when the supplied enemy is currently inside the active zone.
-    /// </summary>
+
     public bool ContainsEnemy(GameObject enemy)
     {
         return enemy != null && enemiesInZone.Contains(enemy);

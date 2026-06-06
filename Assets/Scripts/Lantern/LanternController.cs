@@ -120,9 +120,6 @@ public class LanternController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Toggles the lantern on or off.
-    /// </summary>
     public void ToggleLantern()
     {
         if (IsActive)
@@ -134,9 +131,7 @@ public class LanternController : MonoBehaviour
         TryTurnOn();
     }
 
-    /// <summary>
-    /// Attempts to turn the lantern on, consuming a candle if new fuel is needed.
-    /// </summary>
+
     public bool TryTurnOn()
     {
         if (currentState == LanternState.Cooldown)
@@ -168,10 +163,7 @@ public class LanternController : MonoBehaviour
         Log("Lantern turned on.");
         return true;
     }
-    /// <summary>
-    /// Used by the first lantern pickup to immediately activate the lantern
-    /// with initial fuel already loaded.
-    /// </summary>
+
     public void ActivateLanternWithFuel(float fuelAmount)
     {
         currentFuelSeconds = fuelAmount;
@@ -193,9 +185,7 @@ public class LanternController : MonoBehaviour
 
         Log("Lantern activated from pickup.");
     }
-    /// <summary>
-    /// Turns the lantern off and optionally starts cooldown.
-    /// </summary>
+
     public void TurnOff(bool startCooldown)
     {
         if (!IsActive && currentState != LanternState.Empty)
@@ -219,9 +209,7 @@ public class LanternController : MonoBehaviour
         Log("Lantern turned off.");
     }
 
-    /// <summary>
-    /// Debug helper for draining fuel immediately.
-    /// </summary>
+
     public void DrainFuel(float amount)
     {
         if (amount <= 0f)

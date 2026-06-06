@@ -53,9 +53,7 @@ public class SlidingDoor : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Compatible con otros sistemas.
-    /// </summary>
+
     public void UseDoor(GameObject instigator)
     {
         if (isOpen || isMoving)
@@ -70,9 +68,6 @@ public class SlidingDoor : MonoBehaviour
         OpenDoor();
     }
 
-    /// <summary>
-    /// Compatible con Interactable -> OnInteract()
-    /// </summary>
     public void Interact()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");

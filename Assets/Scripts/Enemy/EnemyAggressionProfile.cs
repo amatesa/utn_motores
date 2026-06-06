@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Data-driven tuning profile for enemy horror pressure.
-/// Values are multipliers unless otherwise noted, allowing the existing enemy
-/// modules to keep their local base tuning.
-/// </summary>
+
 [CreateAssetMenu(fileName = "EnemyAggressionProfile", menuName = "Silent Escape/Enemy/Aggression Profile")]
 public class EnemyAggressionProfile : ScriptableObject
 {

@@ -1,19 +1,12 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// Runtime candle resource store used by the lantern.
-/// This is intentionally separate from the key inventory because candles are
-/// consumable survival resources, not progression collectibles.
-/// </summary>
+
 [DisallowMultipleComponent]
 public class CandleInventory : MonoBehaviour
 {
     public static CandleInventory Instance { get; private set; }
 
-    /// <summary>
-    /// Raised whenever the candle count changes. Parameter is the new count.
-    /// </summary>
     public event Action<int> OnCandleCountChanged;
 
     [Header("Candles")]
@@ -41,17 +34,12 @@ public class CandleInventory : MonoBehaviour
         currentCandles = Mathf.Clamp(currentCandles, 0, maxCandles);
     }
 
-    /// <summary>
-    /// Adds candles up to the configured maximum.
-    /// </summary>
+
     public void AddCandles(int amount)
     {
         TryAddCandles(amount);
     }
 
-    /// <summary>
-    /// Attempts to add candles. Returns true if at least one candle was accepted.
-    /// </summary>
     public bool TryAddCandles(int amount)
     {
         if (amount <= 0 || AvailableSpace <= 0)
@@ -70,9 +58,7 @@ public class CandleInventory : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// Attempts to consume candles. Returns false if there are not enough.
-    /// </summary>
+
     public bool TryConsumeCandles(int amount)
     {
         if (amount <= 0)
@@ -87,9 +73,7 @@ public class CandleInventory : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Returns true when the requested amount can be consumed.
-    /// </summary>
+
     public bool CanConsume(int amount)
     {
         return amount <= 0 || currentCandles >= amount;

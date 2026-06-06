@@ -1,11 +1,7 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// Central enemy-side pressure scaler.
-/// It listens to game phase changes and pushes profile values into enemy modules
-/// through narrow tuning methods, keeping phase logic out of the FSM.
-/// </summary>
+
 [DisallowMultipleComponent]
 [RequireComponent(typeof(ShadowEnemyBrain))]
 [RequireComponent(typeof(ShadowEnemyMovementController))]
@@ -13,9 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(ShadowEnemyTeleportController))]
 public class EnemyAggressionController : MonoBehaviour
 {
-    /// <summary>
-    /// Raised whenever a new aggression profile is applied.
-    /// </summary>
+
     public event Action<EnemyAggressionProfile> OnAggressionProfileChanged;
 
     [Header("Profiles")]
@@ -84,9 +78,6 @@ public class EnemyAggressionController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Applies a profile directly. Useful for scripted difficulty changes or tests.
-    /// </summary>
     public void ApplyProfile(EnemyAggressionProfile profile)
     {
         if (profile == null)
@@ -113,26 +104,19 @@ public class EnemyAggressionController : MonoBehaviour
             Debug.Log($"[EnemyAggressionController] Applied {profile.DisplayName} ({profile.AggressionLevel}) on {name}");
     }
 
-    /// <summary>
-    /// Forces an aggression level using the configured profile mapping.
-    /// </summary>
+ 
     public void ForceAggressionLevel(EnemyAggressionLevel level)
     {
         ApplyProfile(GetProfileForLevel(level));
     }
 
-    /// <summary>
-    /// Converts a lantern protection value into the amount this enemy should
-    /// actually respect after aggression resistance.
-    /// </summary>
+
     public float GetEffectiveLanternProtection(float baseProtection)
     {
         return Mathf.Clamp01(baseProtection * EffectiveLanternProtectionMultiplier);
     }
 
-    /// <summary>
-    /// Applies the profile mapped to the current GamePhaseSystem phase.
-    /// </summary>
+
     public void ApplyProfileForCurrentPhase()
     {
         GamePhase phase = GamePhaseSystem.Instance != null
