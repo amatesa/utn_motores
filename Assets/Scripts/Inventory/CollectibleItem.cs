@@ -37,6 +37,13 @@ public class CollectibleItem : MonoBehaviour
         // =========================
         InventoryManager.Instance.AddItem(itemData.itemID);
 
+        KeyPhaseTrigger phaseTrigger = GetComponent<KeyPhaseTrigger>();
+
+        if (phaseTrigger != null)
+        {
+            phaseTrigger.TriggerPhase();
+        }
+
         Debug.Log("[ITEM] Collected: " + itemData.itemName);
 
         PlayPickupAudio();

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Sistema de visión del enemigo.
@@ -41,6 +42,12 @@ public class EnemyPerception : MonoBehaviour
     public float visionRange = 8f;
     public float viewAngle = 120f;
 
+    [Header("Navigation Range")]
+    [SerializeField] private bool requireNavigablePath = true;
+    [SerializeField] private float navMeshSampleRadius = 1.5f;
+    [SerializeField] private float maxNavMeshSampleVerticalOffset = 0.75f;
+    [SerializeField] private float pathDistanceTolerance = 0.25f;
+
     // =========================
     // LAYERS
     // =========================
@@ -54,6 +61,13 @@ public class EnemyPerception : MonoBehaviour
     // =========================
     [Header("Debug")]
     public bool debug = true;
+
+    private NavMeshPath reusablePath;
+
+    private void Awake()
+    {
+        reusablePath = new NavMeshPath();
+    }
 
     /// <summary>
     /// Evalúa si el enemigo puede ver al jugador.
@@ -83,13 +97,14 @@ public class EnemyPerception : MonoBehaviour
 
         // Dirección y distancia al target normalizadas (para checks posteriores)
         Vector3 dir = (targetPos - origin).normalized;
-        float distance = Vector3.Distance(origin, targetPos);
+        float directDistance = Vector3.Distance(origin, targetPos);
 
         // =========================
-        // DISTANCE CHECK
+        // NAVIGATION DISTANCE CHECK
         // =========================
-        // Primer filtro > evita cálculos innecesarios
-        if (distance > visionRange)
+        // El rango se valida por camino navegable, no por distancia 3D directa.
+        // Evita falsos positivos cuando el player está justo encima/debajo en otro piso.
+        if (!TryGetReachableDistanceToTarget(visionRange, out float reachableDistance))
         {
             DebugDraw(origin, dir, Color.gray);
             return false;
@@ -106,7 +121,7 @@ public class EnemyPerception : MonoBehaviour
         // muy cerca pero fuera del ángulo exacto.
         float effectiveAngle = viewAngle;
 
-        if (distance < 3f)
+        if (reachableDistance < 3f)
         {
             effectiveAngle *= 1.5f;
         }
@@ -126,7 +141,7 @@ public class EnemyPerception : MonoBehaviour
         // En FPS el target suele ser un punto/cámara sin collider, por eso no podemos
         // depender de "pegarle" al layer del player para considerar visión válida.
         // Si no hay obstáculo en la línea de visión hasta el target, el jugador es visible.
-        if (Physics.Raycast(origin, dir, out RaycastHit obstacleHit, distance, obstacleMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(origin, dir, out RaycastHit obstacleHit, directDistance, obstacleMask, QueryTriggerInteraction.Ignore))
         {
             DebugDraw(origin, dir, Color.red);
             Debug.Log("[PERCEPTION] BLOCKED BY " + obstacleHit.collider.name);
@@ -135,7 +150,7 @@ public class EnemyPerception : MonoBehaviour
 
         // Debug opcional: intentamos verificar si hay collider del player en la trayectoria,
         // pero ya no es requisito para detectar (evita falsos negativos en modo FPS).
-        if (playerMask.value != 0 && Physics.Raycast(origin, dir, out RaycastHit playerHit, distance, playerMask, QueryTriggerInteraction.Ignore))
+        if (playerMask.value != 0 && Physics.Raycast(origin, dir, out RaycastHit playerHit, directDistance, playerMask, QueryTriggerInteraction.Ignore))
         {
             Debug.Log("[PERCEPTION] PLAYER COLLIDER HIT: " + playerHit.collider.name);
         }
@@ -143,6 +158,99 @@ public class EnemyPerception : MonoBehaviour
         DebugDraw(origin, dir, Color.green);
         Debug.Log("[PERCEPTION] PLAYER DETECTED");
         return true;
+    }
+
+    public bool IsTargetReachableWithin(float maxDistance)
+    {
+        return TryGetReachableDistanceToTarget(maxDistance, out _);
+    }
+
+    public bool TryGetReachableDistanceToTarget(float maxDistance, out float reachableDistance)
+    {
+        if (!TryGetReachablePathToTarget(out reachableDistance, out _))
+            return false;
+
+        return reachableDistance <= maxDistance + pathDistanceTolerance;
+    }
+
+    public bool TryGetReachablePathToTarget(out float reachableDistance, out Vector3 navMeshTargetPosition)
+    {
+        reachableDistance = Mathf.Infinity;
+        navMeshTargetPosition = Vector3.zero;
+
+        if (target == null)
+            return false;
+
+        if (!requireNavigablePath)
+        {
+            reachableDistance = Vector3.Distance(transform.position, target.position);
+            navMeshTargetPosition = target.position;
+            return true;
+        }
+
+        if (reusablePath == null)
+            reusablePath = new NavMeshPath();
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit selfHit, navMeshSampleRadius, NavMesh.AllAreas))
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] ENEMY NOT ON NAVMESH");
+
+            return false;
+        }
+
+        if (Mathf.Abs(transform.position.y - selfHit.position.y) > maxNavMeshSampleVerticalOffset)
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] ENEMY NAVMESH SAMPLE ON DIFFERENT FLOOR");
+
+            return false;
+        }
+
+        if (!NavMesh.SamplePosition(target.position, out NavMeshHit targetHit, navMeshSampleRadius, NavMesh.AllAreas))
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] PLAYER NOT ON NAVMESH");
+
+            return false;
+        }
+
+        if (Mathf.Abs(target.position.y - targetHit.position.y) > maxNavMeshSampleVerticalOffset)
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] PLAYER NAVMESH SAMPLE ON DIFFERENT FLOOR");
+
+            return false;
+        }
+
+        navMeshTargetPosition = targetHit.position;
+
+        if (!NavMesh.CalculatePath(selfHit.position, targetHit.position, NavMesh.AllAreas, reusablePath) ||
+            reusablePath.status != NavMeshPathStatus.PathComplete)
+        {
+            if (debug)
+                Debug.Log("[PERCEPTION] PLAYER NAV PATH INCOMPLETE");
+
+            return false;
+        }
+
+        reachableDistance = GetPathLength(reusablePath);
+        return true;
+    }
+
+    private float GetPathLength(NavMeshPath path)
+    {
+        Vector3[] corners = path.corners;
+        if (corners == null || corners.Length < 2)
+            return 0f;
+
+        float length = 0f;
+        for (int i = 1; i < corners.Length; i++)
+        {
+            length += Vector3.Distance(corners[i - 1], corners[i]);
+        }
+
+        return length;
     }
 
     // =========================

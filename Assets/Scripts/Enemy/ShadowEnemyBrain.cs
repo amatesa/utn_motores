@@ -174,11 +174,20 @@ public class ShadowEnemyBrain : MonoBehaviour
 
     private void HandleChase()
     {
-        if (target != null && perception != null && perception.CanSeePlayer())
+        bool canSeePlayer = target != null && perception != null && perception.CanSeePlayer();
+
+        if (canSeePlayer)
         {
             loseSightTimer = 0f;
-            movement.MoveTo(target.position);
+            MoveToPlayerByPath(true);
             Log("CHASE -> following player");
+            return;
+        }
+
+        if (CanKeepPursuingByPath())
+        {
+            loseSightTimer = 0f;
+            Log("CHASE -> pursuing by nav path");
             return;
         }
 
@@ -189,6 +198,35 @@ public class ShadowEnemyBrain : MonoBehaviour
             investigateTimer = 0f;
             Log("CHASE -> INVESTIGATE");
         }
+    }
+
+    private bool CanKeepPursuingByPath()
+    {
+        if (target == null || perception == null)
+            return false;
+
+        if (PlayerHideState.Instance != null && PlayerHideState.Instance.IsHidden)
+            return false;
+
+        return MoveToPlayerByPath(false);
+    }
+
+    private bool MoveToPlayerByPath(bool allowRawTargetFallback)
+    {
+        if (perception != null &&
+            perception.TryGetReachablePathToTarget(out _, out Vector3 navMeshTargetPosition))
+        {
+            movement.MoveTo(navMeshTargetPosition);
+            lastKnownPosition = navMeshTargetPosition;
+            return true;
+        }
+
+        if (!allowRawTargetFallback || target == null)
+            return false;
+
+        movement.MoveTo(target.position);
+        lastKnownPosition = target.position;
+        return true;
     }
 
     private void HandleRetreat()

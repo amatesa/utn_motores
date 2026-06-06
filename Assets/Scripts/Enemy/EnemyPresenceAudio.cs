@@ -63,6 +63,7 @@ public class EnemyPresenceAudio : MonoBehaviour
     private int lastWhisperClipIndex = -1;
     private int lastAttackClipIndex = -1;
     private bool wasThreat;
+
     void Update()
     {
         // El audio depende del estado REAL del enemigo (FSM)
@@ -73,7 +74,6 @@ public class EnemyPresenceAudio : MonoBehaviour
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
-
         // DEBUG: útil para validar sistema en runtime
         //Debug.Log($"[AUDIO] dist={distance:F2} threat={isThreat}");
 
@@ -246,4 +246,5 @@ public class EnemyPresenceAudio : MonoBehaviour
         float max = Mathf.Max(pitchRange.x, pitchRange.y);
         return Random.Range(min, max);
     }
+
 }

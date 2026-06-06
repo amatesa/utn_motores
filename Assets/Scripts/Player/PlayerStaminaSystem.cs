@@ -10,7 +10,7 @@ public class PlayerStaminaSystem : MonoBehaviour
     [SerializeField] private float recoveryDelay = 1.5f;
 
     [Header("Debug")]
-    [SerializeField] private bool debugEnabled = false;
+    //[SerializeField] private bool debugEnabled = false;
 
     private float currentStamina;
     private float lastSprintTime;

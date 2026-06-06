@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 public class ThoughtPopupSystem : MonoBehaviour
@@ -25,6 +26,10 @@ public class ThoughtPopupSystem : MonoBehaviour
     [SerializeField] private int maxQueuedMessages = 5;
     [SerializeField] private float duplicateCooldown = 6f;
 
+    [Header("Safety")]
+    [SerializeField] private float maxPopupLifetime = 12f;
+    [SerializeField] private bool clearOnSceneLoaded = true;
+
     [Header("Debug")]
     [SerializeField] private bool logDebugMessages = false;
     [SerializeField] private bool enableKeyboardDebugTrigger = false;
@@ -39,6 +44,8 @@ public class ThoughtPopupSystem : MonoBehaviour
 
     private ThoughtMessageData? activeMessage;
     private float nextMessageTime;
+    private float activeMessageStartedAt;
+    private float activeMessageForceHideAt;
 
     private void Awake()
     {
@@ -51,6 +58,14 @@ public class ThoughtPopupSystem : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
     private void Update()
@@ -63,6 +78,8 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         CleanRecentMessages();
+
+        RecoverFromInvalidState();
 
         TryDisplayNextQueuedMessage();
     }
@@ -143,9 +160,17 @@ public class ThoughtPopupSystem : MonoBehaviour
         queuedMessages.Clear();
 
         activeMessage = null;
+        activeMessageStartedAt = 0f;
+        activeMessageForceHideAt = 0f;
+        nextMessageTime = 0f;
 
         if (popupUI != null)
             popupUI.StopDisplay();
+    }
+
+    public void ClearImmediate()
+    {
+        Clear();
     }
 
     private void TryDisplayNextQueuedMessage()
@@ -192,11 +217,19 @@ public class ThoughtPopupSystem : MonoBehaviour
         }
 
         activeMessage = data;
+        activeMessageStartedAt = Time.unscaledTime;
 
         nextMessageTime =
             Time.unscaledTime +
             data.Duration +
             messageCooldown;
+
+        activeMessageForceHideAt =
+            activeMessageStartedAt +
+            Mathf.Min(
+                Mathf.Max(0.1f, data.Duration) + 2f,
+                Mathf.Max(0.1f, maxPopupLifetime)
+            );
 
         popupUI.Show(
             data.Message,
@@ -205,12 +238,51 @@ public class ThoughtPopupSystem : MonoBehaviour
             () =>
             {
                 activeMessage = null;
+                activeMessageStartedAt = 0f;
+                activeMessageForceHideAt = 0f;
             }
         );
 
         OnThoughtDisplayed?.Invoke(data);
 
         Log($"Displaying thought: {data.Message}");
+    }
+
+    private void RecoverFromInvalidState()
+    {
+        if (!activeMessage.HasValue)
+            return;
+
+        if (popupUI == null)
+        {
+            activeMessage = null;
+            activeMessageStartedAt = 0f;
+            activeMessageForceHideAt = 0f;
+            return;
+        }
+
+        if (!popupUI.IsDisplaying)
+        {
+            activeMessage = null;
+            activeMessageStartedAt = 0f;
+            activeMessageForceHideAt = 0f;
+            return;
+        }
+
+        if (activeMessageForceHideAt > 0f && Time.unscaledTime >= activeMessageForceHideAt)
+        {
+            Log($"Force-hiding stale thought after {Time.unscaledTime - activeMessageStartedAt:F2}s.");
+            activeMessage = null;
+            activeMessageStartedAt = 0f;
+            activeMessageForceHideAt = 0f;
+            popupUI.ForceHide();
+        }
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (clearOnSceneLoaded)
+            Clear();
     }
 
     private bool IsDuplicateCoolingDown(string message)

@@ -26,10 +26,10 @@ public class ThoughtTrigger : MonoBehaviour
         if (showOnlyOnce && hasTriggered)
             return;
 
-        hasTriggered = true;
-
         if (ThoughtPopupSystem.Instance == null)
             return;
+
+        hasTriggered = true;
 
         ThoughtPopupSystem.Instance.ShowThought(
             message,

@@ -15,9 +15,15 @@ public class ThoughtPopupUI : MonoBehaviour
     [SerializeField] private float fadeInDuration = 0.35f;
     [SerializeField] private float fadeOutDuration = 0.5f;
 
-    private Coroutine displayRoutine;
+    [Header("Safety")]
+    [SerializeField] private float maxDisplayDuration = 12f;
 
-    public bool IsDisplaying => displayRoutine != null;
+    private Coroutine displayRoutine;
+    private Action activeOnComplete;
+    private bool isDisplaying;
+    private int displayVersion;
+
+    public bool IsDisplaying => isDisplaying;
 
     private void Awake()
     {
@@ -25,6 +31,16 @@ public class ThoughtPopupUI : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
 
         HideImmediate();
+    }
+
+    private void OnDisable()
+    {
+        StopDisplay();
+    }
+
+    private void OnDestroy()
+    {
+        StopDisplay();
     }
 
     public Coroutine Show(
@@ -36,8 +52,12 @@ public class ThoughtPopupUI : MonoBehaviour
     {
         StopDisplay();
 
+        isDisplaying = true;
+        activeOnComplete = onComplete;
+        int version = ++displayVersion;
+
         displayRoutine = StartCoroutine(
-            ShowRoutine(message, duration, type, onComplete)
+            ShowRoutine(message, duration, type, version)
         );
 
         return displayRoutine;
@@ -51,6 +71,9 @@ public class ThoughtPopupUI : MonoBehaviour
             displayRoutine = null;
         }
 
+        activeOnComplete = null;
+        isDisplaying = false;
+        displayVersion++;
         HideImmediate();
     }
 
@@ -58,7 +81,7 @@ public class ThoughtPopupUI : MonoBehaviour
         string message,
         float duration,
         ThoughtType type,
-        Action onComplete
+        int version
     )
     {
         if (messageText != null)
@@ -67,15 +90,52 @@ public class ThoughtPopupUI : MonoBehaviour
             messageText.color = GetThoughtColor(type);
         }
 
+        SetVisibleState(true);
+
+        float safeDuration = Mathf.Min(
+            Mathf.Max(0.1f, duration),
+            Mathf.Max(0.1f, maxDisplayDuration)
+        );
+
         yield return Fade(0f, 1f, fadeInDuration);
 
-        yield return new WaitForSecondsRealtime(duration);
+        if (version != displayVersion)
+            yield break;
+
+        yield return new WaitForSecondsRealtime(safeDuration);
+
+        if (version != displayVersion)
+            yield break;
 
         yield return Fade(1f, 0f, fadeOutDuration);
 
-        HideImmediate();
+        CompleteDisplay(version);
+    }
+
+    public void ForceHide()
+    {
+        if (displayRoutine != null)
+        {
+            StopCoroutine(displayRoutine);
+            displayRoutine = null;
+        }
+
+        CompleteDisplay(displayVersion);
+        displayVersion++;
+    }
+
+    private void CompleteDisplay(int version)
+    {
+        if (version != displayVersion)
+            return;
 
         displayRoutine = null;
+        isDisplaying = false;
+
+        Action onComplete = activeOnComplete;
+        activeOnComplete = null;
+
+        HideImmediate();
 
         onComplete?.Invoke();
     }
@@ -105,6 +165,15 @@ public class ThoughtPopupUI : MonoBehaviour
         }
 
         canvasGroup.alpha = to;
+    }
+
+    private void SetVisibleState(bool visible)
+    {
+        if (canvasGroup == null)
+            return;
+
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
     }
 
     private void HideImmediate()

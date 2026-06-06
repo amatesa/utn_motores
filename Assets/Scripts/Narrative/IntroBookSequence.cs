@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using StarterAssets;
-
+using System.Collections;
 
 [DisallowMultipleComponent]
 public class IntroBookSequence : MonoBehaviour
@@ -47,6 +47,12 @@ public class IntroBookSequence : MonoBehaviour
     [SerializeField] private AudioSource pageAudioSource;
     [SerializeField] private AudioClip pageTurnClip;
     [SerializeField] private float pageTurnVolume = 1f;
+
+    [Header("Narration Timing")]
+    [SerializeField] private float firstPageNarrationDelay = 0.75f;
+    [SerializeField] private float pageTurnNarrationDelay = 0.90f;
+
+    private Coroutine narrationCoroutine;
 
     [Header("Debug")]
     [SerializeField] private bool logDebugMessages = false;
@@ -116,8 +122,10 @@ public class IntroBookSequence : MonoBehaviour
         SetCursorForSequence(true);
 
         RenderCurrentPage();
-        PlayNarrationForCurrentPage();
+
         bookUI.Show();
+
+        StartNarrationWithDelay(firstPageNarrationDelay);
 
         OnSequenceOpened?.Invoke();
         Log("Intro book opened.");
@@ -154,9 +162,12 @@ public class IntroBookSequence : MonoBehaviour
             return;
 
         currentPageIndex++;
+
         RenderCurrentPage();
+
         PlayPageTurn();
-        PlayNarrationForCurrentPage();
+
+        StartNarrationWithDelay(pageTurnNarrationDelay);
     }
 
 
@@ -166,8 +177,30 @@ public class IntroBookSequence : MonoBehaviour
             return;
 
         currentPageIndex--;
+
         RenderCurrentPage();
+
         PlayPageTurn();
+
+        StartNarrationWithDelay(pageTurnNarrationDelay);
+    }
+
+    private void StartNarrationWithDelay(float delay)
+    {
+        if (narrationCoroutine != null)
+            StopCoroutine(narrationCoroutine);
+
+        narrationCoroutine = StartCoroutine(PlayNarrationDelayed(delay));
+    }
+
+    private IEnumerator PlayNarrationDelayed(float delay)
+    {
+        StopNarration();
+
+        yield return new WaitForSeconds(delay);
+
+        narrationCoroutine = null;
+
         PlayNarrationForCurrentPage();
     }
 
@@ -209,7 +242,13 @@ public class IntroBookSequence : MonoBehaviour
 
     private void StopNarration()
     {
-        if (narrationSource != null && narrationSource.isPlaying)
+        if (narrationCoroutine != null)
+        {
+            StopCoroutine(narrationCoroutine);
+            narrationCoroutine = null;
+        }
+
+        if (narrationSource != null)
             narrationSource.Stop();
     }
 

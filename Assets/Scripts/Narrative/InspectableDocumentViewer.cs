@@ -25,13 +25,16 @@ public class InspectableDocumentViewer : MonoBehaviour
 
     public void Open(Sprite documentSprite)
     {
+        ThoughtPopupSystem.Instance?.ClearImmediate();
+
         if (documentImage != null)
             documentImage.sprite = documentSprite;
 
         PlayClip(openClip, openVolume);
         IsOpen = true;
 
-        canvasRoot.SetActive(true);
+        if (canvasRoot != null)
+            canvasRoot.SetActive(true);
 
         if (gameplayHUD != null)
             gameplayHUD.SetActive(false);
@@ -48,10 +51,13 @@ public class InspectableDocumentViewer : MonoBehaviour
 
     public void Close()
     {
+        ThoughtPopupSystem.Instance?.ClearImmediate();
+
         PlayClip(closeClip, closeVolume);
         IsOpen = false;
 
-        canvasRoot.SetActive(false);
+        if (canvasRoot != null)
+            canvasRoot.SetActive(false);
 
         if (gameplayHUD != null)
             gameplayHUD.SetActive(true);
