@@ -207,13 +207,3 @@ Proyecto desarrollado para:
 Motores de Videojuegos I  
 Tecnicatura en Desarrollo y Producción de Videojuegos
 
----
-
-## Equipo
-
-- Adriel Leonardo Agüero
-- Vicentino Echeverria
-- Valentin Herrera
-- Juan Bautista Lebrero Joseph
-- Alejandro M. Matesa
-- Alan Ariel Palinzuela
